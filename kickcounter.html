@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KickCounter</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fdf4ff;
+      --card: #ffffff;
+      --border: #e9d5ff;
+      --primary: #7c3aed;
+      --primary-light: #ede9fe;
+      --accent: #db2777;
+      --accent-light: #fce7f3;
+      --text: #1e1b4b;
+      --muted: #6b7280;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'DM Sans', 'Segoe UI', sans-serif;
+      color: var(--text);
+      padding-bottom: 48px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ── Gate ── */
+    #gate {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .gate-card {
+      background: white;
+      border-radius: 24px;
+      padding: 40px 28px 32px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 12px 40px rgba(124,58,237,0.14);
+      text-align: center;
+    }
+    .gate-icon { font-size: 52px; margin-bottom: 14px; }
+    .gate-title { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 6px; }
+    .gate-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+    .gate-input {
+      width: 100%; padding: 14px 16px; border: 2px solid var(--border);
+      border-radius: 14px; font-size: 20px; text-align: center;
+      font-family: inherit; letter-spacing: 6px; outline: none;
+      transition: border-color 0.2s; color: var(--text);
+    }
+    .gate-input:focus { border-color: var(--primary); }
+    .gate-input.error { border-color: var(--danger); animation: shake 0.35s; }
+    .gate-btn {
+      width: 100%; margin-top: 14px; padding: 15px;
+      border: none; border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; font-size: 16px; font-weight: 700;
+      font-family: inherit; cursor: pointer; transition: opacity 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .gate-btn:hover { opacity: 0.9; }
+    .gate-err { color: var(--danger); font-size: 13px; margin-top: 10px; min-height: 18px; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    /* ── App ── */
+    #app { display: none; max-width: 480px; margin: 0 auto; padding: 0 16px; }
+
+    /* ── Header ── */
+    .hdr { text-align: center; padding: 28px 0 20px; }
+    .hdr-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--primary); font-weight: 700; margin-bottom: 6px; }
+    .hdr-title { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.1; }
+    .hdr-badges { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    .badge { font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 99px; }
+    .badge-week { background: var(--primary-light); color: var(--primary); }
+    .badge-due { background: var(--accent-light); color: var(--accent); }
+
+    /* ── Card ── */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(124,58,237,0.06); }
+    .card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 14px; }
+
+    /* ── Today stats ── */
+    .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+    .stat-box { background: var(--bg); border-radius: 12px; padding: 12px 6px; text-align: center; }
+    .stat-val { font-size: 22px; font-weight: 700; color: var(--primary); line-height: 1.1; }
+    .stat-lbl { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
+
+    /* ── Goal ring ── */
+    .goal-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; padding: 12px; background: var(--bg); border-radius: 14px; }
+    .goal-ring-wrap { position: relative; flex-shrink: 0; width: 72px; height: 72px; }
+    .goal-ring-wrap canvas { display: block; }
+    .goal-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .goal-ring-pct { font-size: 13px; font-weight: 700; color: var(--primary); line-height: 1; }
+    .goal-ring-of { font-size: 9px; color: var(--muted); font-weight: 600; }
+    .goal-info { flex: 1; min-width: 0; }
+    .goal-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .goal-sub { font-size: 11px; color: var(--muted); line-height: 1.45; }
+
+    /* ── Timeline ── */
+    .section-lbl { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 7px; }
+    .timeline-strip { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; height: 26px; }
+    .tl-cell { border-radius: 3px; background: #e9d5ff; position: relative; }
+    .tl-cell.lit { background: var(--primary); }
+    .tl-cell.now { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .timeline-hours { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Alert ── */
+    .alert-box { border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
+    .alert-box.warn { background: #fffbeb; border: 1px solid #fde68a; }
+    .alert-box.ok { background: #ecfdf5; border: 1px solid #6ee7b7; }
+    .alert-box.info { background: var(--primary-light); border: 1px solid var(--border); }
+    .alert-icon { font-size: 18px; flex-shrink: 0; }
+    .alert-text { font-size: 12px; line-height: 1.5; }
+    .alert-text strong { display: block; font-size: 13px; margin-bottom: 2px; }
+
+    /* ── Log tabs ── */
+    .pill-tabs { display: flex; background: var(--bg); border-radius: 12px; padding: 3px; margin-bottom: 16px; }
+    .pill-tab { flex: 1; padding: 9px 6px; border: none; border-radius: 10px; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); transition: all 0.18s; }
+    .pill-tab.active { background: white; color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+    /* ── Type grid ── */
+    .picker-lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
+    .type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
+    .type-btn { padding: 11px 8px; border: 2px solid var(--border); border-radius: 12px; background: white; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; text-align: center; color: var(--text); }
+    .type-btn .type-emoji { display: block; font-size: 22px; margin-bottom: 4px; }
+    .type-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+    .type-btn:active { transform: scale(0.96); }
+
+    /* ── Intensity ── */
+    .int-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .int-btn { flex: 1; padding: 10px 4px; border: 2px solid var(--border); border-radius: 10px; background: white; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; color: var(--muted); }
+    .int-btn.active.gentle { border-color: #34d399; background: #d1fae5; color: #065f46; }
+    .int-btn.active.medium { border-color: #f59e0b; background: #fef3c7; color: #92400e; }
+    .int-btn.active.strong { border-color: #ef4444; background: #fee2e2; color: #991b1b; }
+    .int-btn:active { transform: scale(0.96); }
+
+    /* ── Time row ── */
+    .time-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .time-row label { font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+    .time-inp { flex: 1; padding: 10px 12px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; outline: none; transition: border-color 0.2s; color: var(--text); background: white; }
+    .time-inp:focus { border-color: var(--primary); }
+    .now-btn { padding: 10px 14px; border: 2px solid var(--border); border-radius: 10px; background: white; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--primary); white-space: nowrap; transition: all 0.15s; }
+    .now-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+
+    /* ── Note ── */
+    .note-toggle { background: none; border: none; font-family: inherit; font-size: 12px; color: var(--muted); cursor: pointer; padding: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 4px; }
+    .note-inp { width: 100%; padding: 10px 12px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; outline: none; margin-bottom: 14px; resize: none; transition: border-color 0.2s; }
+    .note-inp:focus { border-color: var(--primary); }
+
+    /* ── Log button ── */
+    .log-btn { width: 100%; padding: 18px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; font-size: 17px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(124,58,237,0.28); letter-spacing: 0.3px; }
+    .log-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+    .log-btn:active { transform: scale(0.98); }
+    .log-btn:disabled { opacity: 0.7; cursor: default; transform: none; }
+    .log-btn.success { background: linear-gradient(135deg, var(--success), #10b981); box-shadow: 0 4px 16px rgba(5,150,105,0.28); }
+
+    /* ── Undo bar ── */
+    .undo-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding: 10px 14px; background: var(--primary-light); border-radius: 10px; font-size: 13px; color: var(--primary); font-weight: 500; }
+    .undo-btn { background: none; border: none; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--primary); cursor: pointer; text-decoration: underline; }
+
+    /* ── Session fields ── */
+    .session-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .session-field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
+    .session-inp { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 18px; font-weight: 700; outline: none; text-align: center; transition: border-color 0.2s; color: var(--text); background: white; }
+    .session-inp:focus { border-color: var(--primary); }
+
+    /* ── Timer ── */
+    .timer-display { text-align: center; font-size: 44px; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; padding: 10px 0 14px; letter-spacing: 2px; }
+    .timer-btns { display: flex; gap: 8px; margin-bottom: 14px; }
+    .t-btn { flex: 1; padding: 13px; border: 2px solid var(--border); border-radius: 12px; background: white; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+    .t-btn.t-start { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+    .t-btn.t-stop { border-color: var(--danger); background: #fee2e2; color: var(--danger); }
+    .t-btn.t-reset { color: var(--muted); }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+    /* ── Charts ── */
+    .chart-wrap { position: relative; height: 190px; margin-bottom: 4px; }
+
+    /* ── Heatmap ── */
+    .heatmap-wrap { overflow-x: auto; }
+    .heatmap-grid { display: flex; flex-direction: column; gap: 2px; min-width: 320px; }
+    .hm-row { display: grid; grid-template-columns: 30px repeat(24, 1fr); gap: 2px; }
+    .hm-day { font-size: 10px; color: var(--muted); font-weight: 600; display: flex; align-items: center; }
+    .hm-cell { height: 14px; border-radius: 2px; background: #e9d5ff; }
+    .hm-hour-row { display: grid; grid-template-columns: 30px repeat(24, 1fr); gap: 2px; margin-top: 3px; }
+    .hm-hour { font-size: 8px; color: var(--muted); text-align: center; }
+
+    /* ── Log list ── */
+    .log-item { display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; border-bottom: 1px solid #f3e8ff; }
+    .log-item:last-child { border-bottom: none; }
+    .log-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; background: var(--primary-light); }
+    .log-body { flex: 1; min-width: 0; }
+    .log-main { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
+    .log-type { font-size: 13px; font-weight: 700; text-transform: capitalize; }
+    .int-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; }
+    .int-badge.gentle { background: #d1fae5; color: #065f46; }
+    .int-badge.medium { background: #fef3c7; color: #92400e; }
+    .int-badge.strong { background: #fee2e2; color: #991b1b; }
+    .session-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; background: var(--primary-light); color: var(--primary); }
+    .log-time { font-size: 11px; color: var(--muted); }
+    .log-note { font-size: 11px; color: var(--muted); margin-top: 2px; font-style: italic; }
+    .log-actions { display: flex; gap: 2px; flex-shrink: 0; }
+    .la-btn { background: none; border: none; cursor: pointer; font-size: 15px; padding: 5px; border-radius: 8px; transition: background 0.15s; }
+    .la-btn:hover { background: var(--bg); }
+
+    /* ── Knowledge ── */
+    .knowledge-card { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%); border-radius: 18px; padding: 22px; margin-bottom: 14px; }
+    .kn-week { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #a5b4fc; margin-bottom: 8px; }
+    .kn-title { font-family: 'Playfair Display', serif; font-size: 19px; color: white; margin-bottom: 14px; line-height: 1.3; }
+    .kn-points { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .kn-points li { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: #e0e7ff; }
+    .kn-points li::before { content: '•'; color: #a5b4fc; flex-shrink: 0; font-size: 18px; line-height: 1.15; }
+    .kn-alert { margin-top: 14px; background: rgba(239,68,68,0.18); border: 1px solid rgba(239,68,68,0.35); border-radius: 12px; padding: 12px 14px; font-size: 12px; color: #fca5a5; line-height: 1.5; }
+    .kn-alert strong { display: block; margin-bottom: 3px; color: #fecaca; font-size: 13px; }
+
+    /* ── Export ── */
+    .export-btn { width: 100%; padding: 15px; border: 2px solid var(--border); border-radius: 14px; background: white; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; color: var(--primary); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .export-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+
+    /* ── Modal ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(3px); z-index: 100; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 0; }
+    .modal { background: white; border-radius: 22px 22px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 480px; }
+    .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 18px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+    .modal-btn { flex: 1; padding: 14px; border-radius: 12px; border: none; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+    .m-cancel { background: var(--bg); color: var(--muted); }
+    .m-delete { background: #fee2e2; color: var(--danger); }
+    .m-save { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+
+    /* ── Utils ── */
+    .hidden { display: none !important; }
+    .show-more { background: none; border: none; font-family: inherit; font-size: 13px; color: var(--primary); cursor: pointer; font-weight: 600; padding: 10px 0 0; display: flex; align-items: center; gap: 4px; }
+    .empty-state { text-align: center; padding: 28px 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .empty-state .es-icon { font-size: 36px; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ Passphrase Gate ══════════════════════════════════════════════════════ -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-icon">🍼</div>
+    <div class="gate-title">KickCounter</div>
+    <p class="gate-sub">Enter the passphrase to continue</p>
+    <input id="gate-input" class="gate-input" type="password" placeholder="••••" autocomplete="off">
+    <button class="gate-btn" id="gate-btn">Unlock</button>
+    <p class="gate-err hidden" id="gate-err">Incorrect passphrase — try again</p>
+  </div>
+</div>
+
+<!-- ══ App ══════════════════════════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-eyebrow">Baby Movement Tracker</div>
+    <h1 class="hdr-title">KickCounter</h1>
+    <div class="hdr-badges">
+      <span class="badge badge-week" id="week-badge">Week —</span>
+      <span class="badge badge-due" id="due-badge">Due Aug 6</span>
+    </div>
+  </div>
+
+  <!-- Today's Activity -->
+  <div class="card">
+    <div class="card-title">Today's Activity</div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-val" id="stat-count">—</div><div class="stat-lbl">Movements</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-last">—</div><div class="stat-lbl">Since Last</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-avg">—</div><div class="stat-lbl">7-Day Avg</div></div>
+    </div>
+
+    <div class="goal-row">
+      <div class="goal-ring-wrap">
+        <canvas id="goal-ring" width="72" height="72"></canvas>
+        <div class="goal-ring-center">
+          <div class="goal-ring-pct" id="goal-pct">0%</div>
+          <div class="goal-ring-of">goal</div>
+        </div>
+      </div>
+      <div class="goal-info">
+        <div class="goal-title" id="goal-title">Daily goal</div>
+        <div class="goal-sub" id="goal-sub">Loading...</div>
+      </div>
+    </div>
+
+    <div class="section-lbl">Kicks by hour — today</div>
+    <div class="timeline-strip" id="timeline"></div>
+    <div class="timeline-hours"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>11pm</span></div>
+  </div>
+
+  <!-- Pattern alert (injected) -->
+  <div id="alert-area"></div>
+
+  <!-- Log Movement -->
+  <div class="card">
+    <div class="card-title">Log Movement</div>
+
+    <div class="pill-tabs">
+      <button class="pill-tab active" id="tab-kick" onclick="switchLogTab('kick')">Individual Kick</button>
+      <button class="pill-tab" id="tab-session" onclick="switchLogTab('session')">Count Session</button>
+    </div>
+
+    <!-- ── Individual kick form ── -->
+    <div id="kick-form">
+      <div class="picker-lbl">Movement Type</div>
+      <div class="type-grid" id="type-grid">
+        <button class="type-btn active" data-type="kick" onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">🦶</span>Kick</button>
+        <button class="type-btn" data-type="roll" onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">🌀</span>Roll</button>
+        <button class="type-btn" data-type="hiccup" onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">💨</span>Hiccup</button>
+        <button class="type-btn" data-type="jab" onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">👊</span>Jab</button>
+      </div>
+
+      <div class="picker-lbl">Intensity</div>
+      <div class="int-row" id="int-grid">
+        <button class="int-btn gentle" data-int="gentle" onclick="selectInt(this,'int-grid','kickInt')">Gentle</button>
+        <button class="int-btn active medium" data-int="medium" onclick="selectInt(this,'int-grid','kickInt')">Medium</button>
+        <button class="int-btn strong" data-int="strong" onclick="selectInt(this,'int-grid','kickInt')">Strong</button>
+      </div>
+
+      <div class="time-row">
+        <label>Time</label>
+        <input type="time" class="time-inp" id="kick-time">
+        <button class="now-btn" onclick="setNow('kick-time')">Now</button>
+      </div>
+
+      <button class="note-toggle" id="note-tog" onclick="toggleNote('note-area','note-tog')">+ Add note</button>
+      <textarea id="note-area" class="note-inp hidden" rows="2" placeholder="Optional note..."></textarea>
+
+      <button class="log-btn" id="log-kick-btn" onclick="logKick()">Log Movement</button>
+      <div id="kick-undo" class="hidden"></div>
+    </div>
+
+    <!-- ── Session form ── -->
+    <div id="session-form" class="hidden">
+      <div class="picker-lbl">Predominant Movement Type</div>
+      <div class="type-grid" id="stype-grid">
+        <button class="type-btn active" data-type="kick" onclick="selectType(this,'stype-grid','sessType')"><span class="type-emoji">🦶</span>Kick</button>
+        <button class="type-btn" data-type="roll" onclick="selectType(this,'stype-grid','sessType')"><span class="type-emoji">🌀</span>Roll</button>
+        <button class="type-btn" data-type="hiccup" onclick="selectType(this,'stype-grid','sessType')"><span class="type-emoji">💨</span>Hiccup</button>
+        <button class="type-btn" data-type="jab" onclick="selectType(this,'stype-grid','sessType')"><span class="type-emoji">👊</span>Jab</button>
+      </div>
+
+      <div class="picker-lbl">Intensity</div>
+      <div class="int-row" id="sint-grid">
+        <button class="int-btn gentle" data-int="gentle" onclick="selectInt(this,'sint-grid','sessInt')">Gentle</button>
+        <button class="int-btn active medium" data-int="medium" onclick="selectInt(this,'sint-grid','sessInt')">Medium</button>
+        <button class="int-btn strong" data-int="strong" onclick="selectInt(this,'sint-grid','sessInt')">Strong</button>
+      </div>
+
+      <div class="divider"></div>
+      <div class="picker-lbl">Session Timer</div>
+      <div class="timer-display" id="timer-display">00:00</div>
+      <div class="timer-btns">
+        <button class="t-btn t-start" id="t-start" onclick="startTimer()">▶ Start</button>
+        <button class="t-btn t-stop hidden" id="t-stop" onclick="stopTimer()">■ Stop</button>
+        <button class="t-btn t-reset" id="t-reset" onclick="resetTimer()">↺</button>
+      </div>
+
+      <div class="divider"></div>
+      <div class="session-pair">
+        <div class="session-field">
+          <label>Movement Count</label>
+          <input type="number" class="session-inp" id="sess-count" value="10" min="1" max="100">
+        </div>
+        <div class="session-field">
+          <label>Duration (min)</label>
+          <input type="number" class="session-inp" id="sess-dur" placeholder="e.g. 30" min="1" max="300">
+        </div>
+      </div>
+
+      <div class="time-row">
+        <label>Time</label>
+        <input type="time" class="time-inp" id="sess-time">
+        <button class="now-btn" onclick="setNow('sess-time')">Now</button>
+      </div>
+
+      <button class="note-toggle" id="snote-tog" onclick="toggleNote('snote-area','snote-tog')">+ Add note</button>
+      <textarea id="snote-area" class="note-inp hidden" rows="2" placeholder="Optional note..."></textarea>
+
+      <button class="log-btn" id="log-sess-btn" onclick="logSession()">Log Session</button>
+      <div id="sess-undo" class="hidden"></div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="card">
+    <div class="card-title">Summary</div>
+    <div class="pill-tabs" id="sum-tabs">
+      <button class="pill-tab active" onclick="switchSumTab('day',this)">Day</button>
+      <button class="pill-tab" onclick="switchSumTab('week',this)">Week</button>
+      <button class="pill-tab" onclick="switchSumTab('month',this)">Month</button>
+    </div>
+    <div class="chart-wrap"><canvas id="sum-chart"></canvas></div>
+  </div>
+
+  <!-- Heatmap -->
+  <div class="card">
+    <div class="card-title">Activity Heatmap · Last 7 Days</div>
+    <div class="heatmap-wrap">
+      <div class="heatmap-grid" id="heatmap"></div>
+    </div>
+  </div>
+
+  <!-- Recent Logs -->
+  <div class="card">
+    <div class="card-title">Recent Logs</div>
+    <div id="log-list"><div class="empty-state"><div class="es-icon">🌟</div>No movements logged yet.<br>Tap "Log Movement" to get started!</div></div>
+    <button class="show-more hidden" id="show-more-btn" onclick="showAllLogs()">↓ Show older logs</button>
+  </div>
+
+  <!-- Weekly Guidance -->
+  <div id="knowledge-panel"></div>
+
+  <!-- Export -->
+  <div class="card">
+    <button class="export-btn" onclick="exportCSV()">↓ Export as CSV</button>
+  </div>
+
+</div><!-- #app -->
+
+<!-- ══ Edit Modal ═══════════════════════════════════════════════════════════ -->
+<div id="edit-modal" class="modal-overlay hidden" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-title">Edit Entry</div>
+
+    <div class="picker-lbl">Movement Type</div>
+    <div class="type-grid" id="etype-grid">
+      <button class="type-btn" data-type="kick" onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">🦶</span>Kick</button>
+      <button class="type-btn" data-type="roll" onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">🌀</span>Roll</button>
+      <button class="type-btn" data-type="hiccup" onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">💨</span>Hiccup</button>
+      <button class="type-btn" data-type="jab" onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">👊</span>Jab</button>
+    </div>
+
+    <div class="picker-lbl">Intensity</div>
+    <div class="int-row" id="eint-grid">
+      <button class="int-btn gentle" data-int="gentle" onclick="selectInt(this,'eint-grid','editInt')">Gentle</button>
+      <button class="int-btn medium" data-int="medium" onclick="selectInt(this,'eint-grid','editInt')">Medium</button>
+      <button class="int-btn strong" data-int="strong" onclick="selectInt(this,'eint-grid','editInt')">Strong</button>
+    </div>
+
+    <div class="time-row" style="margin-top:4px">
+      <label>Date & Time</label>
+      <input type="datetime-local" class="time-inp" id="edit-time" style="flex:1">
+    </div>
+
+    <div class="picker-lbl" style="margin-top:6px">Note</div>
+    <textarea id="edit-note" class="note-inp" rows="2" placeholder="Optional note..."></textarea>
+
+    <div class="modal-actions">
+      <button class="modal-btn m-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn m-delete" onclick="deleteEntry()">Delete</button>
+      <button class="modal-btn m-save" onclick="saveEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ══════════════════════════════════════════════════════════════════════════════
+// FIREBASE SETUP
+// 1. Go to https://console.firebase.google.com → create a new project (e.g. "kickcounter")
+// 2. Add a Web app → copy the firebaseConfig object into the block below
+// 3. Enable Firestore Database → in Rules tab, paste:
+//    rules_version = '2';
+//    service cloud.firestore {
+//      match /databases/{database}/documents {
+//        match /{document=**} { allow read, write: if true; }
+//      }
+//    }
+// ══════════════════════════════════════════════════════════════════════════════
+import { initializeApp }           from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc,
+         doc, onSnapshot, query, orderBy, Timestamp }
+  from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCiR2yH3cCwC8A7gK4ls8-ODdKoPlxU19s",
+  authDomain: "kickcounter-48185.firebaseapp.com",
+  projectId: "kickcounter-48185",
+  storageBucket: "kickcounter-48185.firebasestorage.app",
+  messagingSenderId: "252826712886",
+  appId: "1:252826712886:web:3ac8c44aa6853dd65f9197"
+};
+
+// ══ Constants ════════════════════════════════════════════════════════════════
+const PASSPHRASE  = "babu";
+const DUE_DATE    = new Date("2026-08-06T00:00:00");
+const AUTH_KEY    = "kc_auth_v1";
+const TYPE_EMOJI  = { kick:'🦶', roll:'🌀', hiccup:'💨', jab:'👊' };
+
+// ══ State ════════════════════════════════════════════════════════════════════
+let db, kicksCol;
+let allKicks      = [];
+let kickType      = 'kick';
+let kickInt       = 'medium';
+let sessType      = 'kick';
+let sessInt       = 'medium';
+let editType      = 'kick';
+let editInt       = 'medium';
+let editingId     = null;
+let lastId        = null;
+let undoTimer     = null;
+let timerInterval = null;
+let timerSecs     = 0;
+let timerRunning  = false;
+let sumTab        = 'day';
+let sumChart      = null;
+let goalRing      = null;
+let logsExpanded  = false;
+
+// ══ Helpers ══════════════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+
+function gestWeek() {
+  const daysLeft = Math.max(0, (DUE_DATE - Date.now()) / 86400000);
+  return Math.max(24, Math.min(42, Math.floor(40 - daysLeft / 7)));
+}
+
+function daysLeft() {
+  return Math.max(0, Math.round((DUE_DATE - Date.now()) / 86400000));
+}
+
+function dayStart(d = new Date()) {
+  const s = new Date(d); s.setHours(0,0,0,0); return s;
+}
+
+function fmtTime(d) {
+  return d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+}
+
+function fmtDate(d) {
+  return d.toLocaleDateString([], { month:'short', day:'numeric' });
+}
+
+function timeSince(d) {
+  const m = Math.floor((Date.now() - d.getTime()) / 60000);
+  if (m < 1)  return '<1m';
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m/60), r = m%60;
+  return r ? `${h}h ${r}m` : `${h}h`;
+}
+
+function nowTimeStr() {
+  const n = new Date();
+  return `${pad(n.getHours())}:${pad(n.getMinutes())}`;
+}
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function kickCount(k) {
+  return k.method === 'session' ? (k.sessionCount || 1) : 1;
+}
+
+function goalForWeek(week) {
+  if (week < 28) return {
+    count: 6,
+    label: 'Get to know baby\'s pattern',
+    sub:   'No fixed daily count yet — notice when baby is most active and track any patterns.'
+  };
+  return {
+    count: 10,
+    label: '10 movements in 2 hours',
+    sub:   'NHS guideline from week 28: if 10 movements take more than 2 hours, contact your midwife.'
+  };
+}
+
+// ══ Weekly knowledge content (sourced from NHS, NHSInform & Tommy's) ════════
+const KNOWLEDGE = {
+  24: { title: "Baby is now the size of an ear of corn",
+    points: ["You may feel flutters, rolls, kicks and jabs — all normal at this stage.",
+             "No fixed daily kick count is needed yet. Focus on getting to know your baby's unique rhythm.",
+             "Baby tends to be quieter when you're active (your movement soothes them) and livelier when you rest.",
+             "Cold drinks or lying on your left side can encourage movement if you want to feel baby.",
+             "It's OK not to feel movement every single hour at 24 weeks."],
+    alert: "Contact your midwife if you feel no movement at all for a full day, or if something doesn't feel right." },
+  25: { title: "Baby is developing a regular sleep-wake cycle",
+    points: ["Baby has predictable active and quiet periods — you may start to notice patterns.",
+             "Movements include kicks, rolls, hiccups (rhythmic jerks) and stretches.",
+             "Hiccups are totally normal and are a sign of a healthy nervous system.",
+             "No specific kick count target at 25 weeks — pattern awareness is key.",
+             "Gentle pressure on your bump may produce a responsive kick."],
+    alert: "If movements slow significantly compared to what has become normal for your baby, contact your midwife." },
+  26: { title: "Baby can hear your voice clearly",
+    points: ["Baby responds to sound and may kick more when you talk, play music, or hear loud noises.",
+             "Movements are becoming stronger and more distinct as baby grows.",
+             "You'll likely notice baby is more active after meals or when you're lying still.",
+             "Still no set daily kick target — getting to know your baby's individual pattern is what matters.",
+             "Rolling onto your left side improves circulation and can increase movement."],
+    alert: "Any notable reduction compared to your baby's normal pattern is worth a call to your midwife." },
+  27: { title: "Final week before the third trimester",
+    points: ["Movements should feel more regular and stronger than in earlier weeks.",
+             "Baby still has room to do big rolls, but kicks and jabs should be clear and distinct.",
+             "You should have a good sense by now of when baby is typically active.",
+             "Don't rely on a fixed daily number — trust your knowledge of YOUR baby's pattern.",
+             "Hiccups feel like short, rhythmic pulses and are very common."],
+    alert: "Always contact your midwife if you're worried about your baby's movements. Never wait until the next appointment." },
+  28: { title: "Welcome to the third trimester",
+    points: ["From now on, you should feel at least 10 distinct movements in 2 hours during an active period.",
+             "Baby tends to be most active between 9pm and 1am.",
+             "Movements should happen every day — there are no expected 'quiet days' from here on.",
+             "The count-to-10 method: start a session timer and count until you reach 10 movements.",
+             "If 10 movements take more than 2 hours, contact your midwife."],
+    alert: "IMPORTANT: Never use a home doppler as reassurance if you're worried about movement. Dopplers can give false reassurance. Contact your midwife or maternity unit instead." },
+  29: { title: "Baby's senses are almost fully developed",
+    points: ["Regular, distinct movements should be felt every day.",
+             "Aim for at least 10 movements within a 2-hour window during an active period.",
+             "Movements may feel more like pushes or stretches as space gets tighter — this is normal.",
+             "The frequency of movements should not reduce, even if the type of movement changes.",
+             "Note which time of day baby is most active — this becomes your personal baseline."],
+    alert: "If movements reduce or stop, contact your midwife immediately. Do not adopt a 'wait and see' approach." },
+  30: { title: "Baby is around 1.5 kg (3.3 lbs)",
+    points: ["Movements should be well-established and consistent every day.",
+             "10 movements in 2 hours is the NHS benchmark from week 28 onwards.",
+             "Baby's pattern should be fairly predictable — use this as your personal normal.",
+             "It's normal for the type of movement to change (more stretches, fewer large rolls).",
+             "Staying well hydrated and eating regularly can support baby's activity."],
+    alert: "Movement should not slow down as you approach your due date. Always contact your midwife if you notice any change." },
+  31: { title: "Baby practises breathing movements",
+    points: ["You may feel rhythmic movements — baby is practising 'breathing' or hiccupping.",
+             "Daily movement count should stay consistent.",
+             "Baby is often most active after meals — use this as a good time to count.",
+             "Lying on your left side improves circulation and may increase movement.",
+             "10 movements taking longer than 2 hours is a signal to call your midwife."],
+    alert: "Trust your instincts. If something feels different from your baby's normal, always contact your midwife." },
+  32: { title: "Baby settles into a head-down position",
+    points: ["You may feel kicks higher up (feet near your ribs) as baby turns head-down.",
+             "Movements should remain frequent — 10+ in 2 hours.",
+             "Some kicks may feel sharp or uncomfortable as baby runs out of room — this is normal.",
+             "Baby's movements are typically strongest between now and 36 weeks.",
+             "Use your baby's peak active time of day to do your daily count."],
+    alert: "Reduced movement is never normal at this stage. Contact your midwife immediately if you notice a change." },
+  33: { title: "Baby is gaining weight rapidly",
+    points: ["Space in the womb is getting tight — movements may feel different but should not be fewer.",
+             "You should still feel at least 10 movements in 2 hours.",
+             "Large rolls may decrease but nudges, stretches, and jabs should still be frequent.",
+             "Baby's pattern should remain consistent with previous weeks.",
+             "This is a great time to track trends — compare this week's activity to last week's."],
+    alert: "MYTH: It is NOT normal for movements to slow near the end of pregnancy. Always report reduced movement to your midwife." },
+  34: { title: "Baby is practising skills needed for birth",
+    points: ["Movements may feel more like rolls, stretches, and wiggles than sharp kicks.",
+             "10 movements in 2 hours remains the daily benchmark.",
+             "Baby is most active in the evening and early morning for most mothers.",
+             "You know your baby's pattern best — trust any changes you notice.",
+             "Never use a home doppler as reassurance — it is not a substitute for midwife contact."],
+    alert: "If you think movements have reduced or changed, contact your maternity unit immediately. Don't wait." },
+  35: { title: "Baby's lungs are almost fully matured",
+    points: ["Regular, frequent movements should continue every day.",
+             "10 movements in 2 hours remains the benchmark.",
+             "Movements may feel more internal (rolls, squirms) and less external (visible kicks).",
+             "Baby's head may be engaging — you might feel pressure rather than kicks low down.",
+             "Hiccups remain common and are a healthy sign."],
+    alert: "Always contact your midwife or maternity unit if movements reduce. Do not wait until your next scheduled appointment." },
+  36: { title: "Baby could arrive in just 4 weeks",
+    points: ["Movements must remain frequent — this close to birth there should be no 'quiet days'.",
+             "Baby's head may be fully engaged, making movements feel more internal.",
+             "10 movements in 2 hours is still the standard to aim for.",
+             "Trust your instincts — if something doesn't feel right, call your midwife.",
+             "Reduced movements at this stage can be an early warning sign. Never ignore it."],
+    alert: "IMPORTANT: Movements should NOT slow down near your due date. This is a dangerous myth. Report any reduction immediately." },
+  37: { title: "Baby is considered full term",
+    points: ["Movement patterns should remain consistent right up to birth.",
+             "You should still aim for 10 movements in 2 hours every day.",
+             "Some mothers notice a burst of activity in the days before labour — this varies.",
+             "Baby may feel like they have less room, but frequency should not decrease.",
+             "If unsure, count movements lying on your left side in a quiet room."],
+    alert: "Reduced movement at 37+ weeks is a serious warning sign. Contact your maternity unit immediately if concerned." },
+  38: { title: "Baby is fully developed and ready",
+    points: ["Daily movements should remain consistent.",
+             "10 movements in 2 hours is still the guideline.",
+             "Any reduction compared to YOUR normal pattern should be reported to your midwife.",
+             "Baby's position (head down) means most movement will be felt in your upper abdomen.",
+             "Stay well hydrated and eat regularly to support baby's activity."],
+    alert: "Do not hesitate to contact your midwife if movements reduce. Call immediately — there is no such thing as 'bothering' them." },
+  39: { title: "Almost there — could be any day now",
+    points: ["Movements remain just as important at 39 weeks as at 28 weeks.",
+             "Aim for 10 movements in 2 hours during an active period.",
+             "Trust your body and your knowledge of your baby's pattern.",
+             "Any change from your normal pattern is worth reporting to your midwife.",
+             "You and your midwife are partners — contact them any time you're worried."],
+    alert: "FINAL WEEKS: Reduced movement is never 'just baby running out of room'. Report changes immediately." },
+  40: { title: "Due date week — baby is ready!",
+    points: ["Movement should continue regularly right until labour begins.",
+             "10 movements in 2 hours remains the benchmark.",
+             "Some babies are very active before labour; others less so — know YOUR normal.",
+             "Any change in movement pattern should be reported to your maternity unit immediately.",
+             "Going past your due date? Movement monitoring becomes even more critical."],
+    alert: "Past your due date: Daily movement monitoring is critical. Contact your team at any sign of reduced movement." }
+};
+
+function getKnowledge(week) {
+  const w = Math.min(40, Math.max(24, week));
+  return KNOWLEDGE[w] || KNOWLEDGE[40];
+}
+
+// ══ Gate ═════════════════════════════════════════════════════════════════════
+function tryUnlock() {
+  const val = $('gate-input').value.trim().toLowerCase();
+  if (val === PASSPHRASE) {
+    localStorage.setItem(AUTH_KEY, '1');
+    $('gate').style.display = 'none';
+    $('app').style.display  = 'block';
+    bootApp();
+  } else {
+    const inp = $('gate-input');
+    inp.classList.add('error');
+    $('gate-err').classList.remove('hidden');
+    setTimeout(() => inp.classList.remove('error'), 450);
+  }
+}
+
+$('gate-btn').addEventListener('click', tryUnlock);
+$('gate-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+
+if (localStorage.getItem(AUTH_KEY) === '1') {
+  $('gate').style.display = 'none';
+  $('app').style.display  = 'block';
+  bootApp();
+}
+
+// ══ Boot ══════════════════════════════════════════════════════════════════════
+function bootApp() {
+  // Check Firebase config
+  if (firebaseConfig.apiKey === 'REPLACE_ME') {
+    $('app').innerHTML = `
+      <div style="padding:40px 24px;text-align:center;font-family:'DM Sans',sans-serif">
+        <div style="font-size:48px;margin-bottom:16px">🔧</div>
+        <h2 style="font-size:20px;margin-bottom:12px;color:#1e1b4b">Firebase Setup Required</h2>
+        <p style="font-size:14px;color:#6b7280;line-height:1.6;max-width:340px;margin:0 auto">
+          Open <strong>kickcounter.html</strong> in a text editor and replace the
+          <code>firebaseConfig</code> values with your Firebase project credentials.<br><br>
+          See the comment block at the top of the &lt;script&gt; for step-by-step instructions.
+        </p>
+      </div>`;
+    return;
+  }
+
+  const fbApp  = initializeApp(firebaseConfig);
+  db           = getFirestore(fbApp);
+  kicksCol     = collection(db, 'kicks');
+
+  updateHeader();
+  initGoalRing();
+  buildTimeline([]);
+  buildHeatmap([]);
+  buildKnowledge();
+  setNow('kick-time');
+  setNow('sess-time');
+
+  const q = query(kicksCol, orderBy('ts', 'desc'));
+  onSnapshot(q, snap => {
+    allKicks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAll();
+  });
+}
+
+// ══ Header ════════════════════════════════════════════════════════════════════
+function updateHeader() {
+  const w = gestWeek();
+  $('week-badge').textContent = `Week ${w}`;
+  $('due-badge').textContent  = `${daysLeft()} days to Aug 6`;
+}
+
+// ══ Render all ════════════════════════════════════════════════════════════════
+function renderAll() {
+  updateHeader();
+  renderToday();
+  renderAlert();
+  renderChart();
+  buildHeatmap(allKicks);
+  renderLogs();
+}
+
+// ══ Today panel ══════════════════════════════════════════════════════════════
+function renderToday() {
+  const today = dayStart();
+  const todayKicks = allKicks.filter(k => k.ts?.toDate() >= today);
+  const todayCount = todayKicks.reduce((s,k) => s + kickCount(k), 0);
+
+  // Last kick
+  const lastKick = todayKicks[0]?.ts?.toDate();
+  $('stat-last').textContent = lastKick ? timeSince(lastKick) : '—';
+  $('stat-count').textContent = todayCount;
+
+  // 7-day average
+  const ago7 = new Date(); ago7.setDate(ago7.getDate()-7); ago7.setHours(0,0,0,0);
+  const weekKicks = allKicks.filter(k => k.ts?.toDate() >= ago7);
+  const dayTotals = {};
+  weekKicks.forEach(k => {
+    const d = k.ts?.toDate(); if (!d) return;
+    const key = d.toDateString();
+    dayTotals[key] = (dayTotals[key] || 0) + kickCount(k);
+  });
+  const vals = Object.values(dayTotals);
+  const avg  = vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+  $('stat-avg').textContent = avg || '—';
+
+  // Goal ring
+  const week = gestWeek();
+  const goal = goalForWeek(week);
+  const pct  = Math.min(1, todayCount / goal.count);
+  $('goal-title').textContent = `Goal: ${goal.count} movements`;
+  $('goal-sub').textContent   = goal.sub;
+  $('goal-pct').textContent   = `${Math.round(pct*100)}%`;
+  updateGoalRing(pct);
+
+  // Timeline
+  buildTimeline(todayKicks);
+}
+
+// ══ Goal ring chart ══════════════════════════════════════════════════════════
+function initGoalRing() {
+  const ctx = $('goal-ring').getContext('2d');
+  goalRing = new Chart(ctx, {
+    type: 'doughnut',
+    data: { datasets: [{ data: [0,1], backgroundColor: ['#7c3aed','#ede9fe'], borderWidth: 0, circumference: 270, rotation: -135 }] },
+    options: { responsive:false, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{enabled:false} } }
+  });
+}
+
+function updateGoalRing(pct) {
+  if (!goalRing) return;
+  const color = pct >= 1 ? '#059669' : '#7c3aed';
+  goalRing.data.datasets[0].data = [pct, Math.max(0, 1-pct)];
+  goalRing.data.datasets[0].backgroundColor = [color, '#ede9fe'];
+  goalRing.update('none');
+}
+
+// ══ Timeline ══════════════════════════════════════════════════════════════════
+function buildTimeline(todayKicks) {
+  const strip = $('timeline');
+  strip.innerHTML = '';
+  const curHour = new Date().getHours();
+  const hourCounts = Array(24).fill(0);
+  todayKicks.forEach(k => {
+    const h = k.ts?.toDate().getHours();
+    if (h !== undefined) hourCounts[h] += kickCount(k);
+  });
+  const maxC = Math.max(1, ...hourCounts);
+  for (let h = 0; h < 24; h++) {
+    const cell = document.createElement('div');
+    cell.className = 'tl-cell';
+    if (hourCounts[h] > 0) {
+      cell.classList.add('lit');
+      cell.style.opacity = 0.35 + 0.65 * (hourCounts[h] / maxC);
+      cell.title = `${h}:00 — ${hourCounts[h]} movement${hourCounts[h]>1?'s':''}`;
+    }
+    if (h === curHour) cell.classList.add('now');
+    strip.appendChild(cell);
+  }
+}
+
+// ══ Pattern alert ════════════════════════════════════════════════════════════
+function renderAlert() {
+  const area = $('alert-area');
+  const week = gestWeek();
+
+  // Don't show alert before week 28
+  if (week < 28) { area.innerHTML = ''; return; }
+
+  const today = dayStart();
+  const todayKicks = allKicks.filter(k => k.ts?.toDate() >= today);
+  const todayCount = todayKicks.reduce((s,k) => s + kickCount(k), 0);
+  const goal = goalForWeek(week);
+  const hour = new Date().getHours();
+
+  // 7-day avg
+  const ago7 = new Date(); ago7.setDate(ago7.getDate()-7); ago7.setHours(0,0,0,0);
+  const dayTotals = {};
+  allKicks.filter(k => k.ts?.toDate() >= ago7).forEach(k => {
+    const d = k.ts?.toDate(); if (!d) return;
+    const key = d.toDateString();
+    dayTotals[key] = (dayTotals[key] || 0) + kickCount(k);
+  });
+  const vals = Object.values(dayTotals);
+  const avg  = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
+
+  const lowGoal  = todayCount < goal.count && hour >= 18;
+  const lowAvg   = avg > 0 && todayCount < avg * 0.5 && hour >= 12;
+
+  if (lowGoal || lowAvg) {
+    area.innerHTML = `<div class="alert-box warn"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>Movement seems lower than usual</strong>${todayCount} movements logged today${avg ? ` vs. your ${Math.round(avg)}-movement daily average` : ''}. Try lying on your left side and counting for 2 hours. Contact your midwife if you reach fewer than 10 in that window.</div></div>`;
+  } else if (todayCount >= goal.count) {
+    area.innerHTML = `<div class="alert-box ok"><div class="alert-icon">✅</div><div class="alert-text"><strong>Daily goal reached!</strong>${todayCount} movements logged today. Baby is active!</div></div>`;
+  } else {
+    area.innerHTML = '';
+  }
+}
+
+// ══ Summary chart ════════════════════════════════════════════════════════════
+function renderChart() {
+  const ctx = $('sum-chart').getContext('2d');
+  if (sumChart) { sumChart.destroy(); sumChart = null; }
+
+  let labels=[], data=[], trend=[], showTrend=false;
+
+  if (sumTab === 'day') {
+    labels = Array.from({length:24}, (_,i) => i===0?'12a': i===12?'12p': i<12?`${i}a`:`${i-12}p`);
+    const today = dayStart();
+    const todayKicks = allKicks.filter(k => k.ts?.toDate() >= today);
+    const counts = Array(24).fill(0);
+    todayKicks.forEach(k => {
+      const h = k.ts?.toDate().getHours();
+      if (h !== undefined) counts[h] += kickCount(k);
+    });
+    data = counts;
+
+  } else if (sumTab === 'week') {
+    const days = Array.from({length:7}, (_,i) => { const d=new Date(); d.setDate(d.getDate()-6+i); return d; });
+    labels = days.map(d => d.toLocaleDateString([], {weekday:'short', month:'numeric', day:'numeric'}));
+    data   = days.map(d => {
+      const s = dayStart(d), e = new Date(s); e.setDate(e.getDate()+1);
+      return allKicks.filter(k => { const t=k.ts?.toDate(); return t>=s && t<e; }).reduce((s,k)=>s+kickCount(k),0);
+    });
+    trend = data.map((_,i) => {
+      const sl = data.slice(Math.max(0,i-2),i+1);
+      return Math.round(sl.reduce((a,b)=>a+b,0)/sl.length * 10)/10;
+    });
+    showTrend = true;
+
+  } else {
+    const weeks = Array.from({length:4}, (_,i) => {
+      const wS = new Date(); wS.setDate(wS.getDate()-3*7+i*7-wS.getDay()); wS.setHours(0,0,0,0);
+      const wE = new Date(wS); wE.setDate(wE.getDate()+7);
+      return {s:wS, e:wE, lbl:`Wk of ${wS.toLocaleDateString([],{month:'short',day:'numeric'})}`};
+    });
+    labels = weeks.map(w => w.lbl);
+    data   = weeks.map(w => allKicks.filter(k=>{const t=k.ts?.toDate(); return t>=w.s&&t<w.e;}).reduce((s,k)=>s+kickCount(k),0));
+  }
+
+  const datasets = [{ label:'Movements', data, backgroundColor:'rgba(124,58,237,0.72)', borderRadius:5, borderSkipped:false }];
+  if (showTrend) datasets.push({ label:'3-day avg', data:trend, type:'line', borderColor:'#db2777', backgroundColor:'transparent', borderWidth:2, pointRadius:3, pointBackgroundColor:'#db2777', tension:0.4 });
+
+  sumChart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: showTrend, position:'top', labels:{ font:{size:11}, boxWidth:10, padding:8 } },
+        tooltip: { callbacks: { label: c => `${c.formattedValue} movements` } }
+      },
+      scales: {
+        x: { grid:{display:false}, ticks:{ font:{size:9}, maxRotation: sumTab==='day'?0:30 } },
+        y: { grid:{color:'#f3e8ff'}, beginAtZero:true, ticks:{ font:{size:11}, stepSize:1, precision:0 } }
+      }
+    }
+  });
+}
+
+window.switchSumTab = function(tab, btn) {
+  sumTab = tab;
+  $('sum-tabs').querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderChart();
+};
+
+// ══ Heatmap ══════════════════════════════════════════════════════════════════
+function buildHeatmap(kicks) {
+  const grid = $('heatmap');
+  grid.innerHTML = '';
+
+  const days = Array.from({length:7}, (_,i) => { const d=new Date(); d.setDate(d.getDate()-6+i); return d; });
+  const heat = {};
+  let maxVal = 1;
+  kicks.forEach(k => {
+    const d = k.ts?.toDate(); if (!d) return;
+    const dayIdx = days.findIndex(x => x.toDateString()===d.toDateString());
+    if (dayIdx < 0) return;
+    const key = `${dayIdx}_${d.getHours()}`;
+    const c = kickCount(k);
+    heat[key] = (heat[key]||0) + c;
+    if (heat[key] > maxVal) maxVal = heat[key];
+  });
+
+  days.forEach((day, di) => {
+    const row = document.createElement('div');
+    row.className = 'hm-row';
+    const lbl = document.createElement('div');
+    lbl.className = 'hm-day';
+    lbl.textContent = day.toLocaleDateString([],{weekday:'short'});
+    row.appendChild(lbl);
+    for (let h=0; h<24; h++) {
+      const cell = document.createElement('div');
+      cell.className = 'hm-cell';
+      const v = heat[`${di}_${h}`] || 0;
+      if (v > 0) {
+        const alpha = 0.18 + 0.82*(v/maxVal);
+        cell.style.background = `rgba(124,58,237,${alpha})`;
+        cell.title = `${day.toLocaleDateString([],{weekday:'short'})} ${h}:00 — ${v} movement${v>1?'s':''}`;
+      }
+      row.appendChild(cell);
+    }
+    grid.appendChild(row);
+  });
+
+  // Hour labels
+  const hourRow = document.createElement('div');
+  hourRow.className = 'hm-hour-row';
+  const spacer = document.createElement('div'); hourRow.appendChild(spacer);
+  for (let h=0; h<24; h++) {
+    const lbl = document.createElement('div');
+    lbl.className = 'hm-hour';
+    lbl.textContent = h===0?'12a': h===12?'12p': h<12?`${h}`: `${h-12}`;
+    hourRow.appendChild(lbl);
+  }
+  grid.appendChild(hourRow);
+}
+
+// ══ Log list ══════════════════════════════════════════════════════════════════
+function renderLogs() {
+  const list = $('log-list');
+  const LIMIT = 10;
+  if (!allKicks.length) {
+    list.innerHTML = `<div class="empty-state"><div class="es-icon">🌟</div>No movements logged yet.<br>Tap "Log Movement" above to get started!</div>`;
+    $('show-more-btn').classList.add('hidden');
+    return;
+  }
+  const shown = logsExpanded ? allKicks : allKicks.slice(0, LIMIT);
+  list.innerHTML = '';
+  shown.forEach(k => {
+    const ts = k.ts?.toDate(); if (!ts) return;
+    const isSess = k.method === 'session';
+    const item = document.createElement('div');
+    item.className = 'log-item';
+    item.innerHTML = `
+      <div class="log-icon">${TYPE_EMOJI[k.type]||'🦶'}</div>
+      <div class="log-body">
+        <div class="log-main">
+          <span class="log-type">${isSess ? `Session (${k.sessionCount||10})` : k.type}</span>
+          <span class="int-badge ${k.intensity}">${k.intensity}</span>
+          ${isSess && k.sessionDuration ? `<span class="session-badge">${k.sessionDuration} min</span>` : ''}
+        </div>
+        <div class="log-time">${fmtDate(ts)} · ${fmtTime(ts)}</div>
+        ${k.note ? `<div class="log-note">"${k.note}"</div>` : ''}
+      </div>
+      <div class="log-actions">
+        <button class="la-btn" title="Edit" onclick="openEdit('${k.id}')">✏️</button>
+        <button class="la-btn" title="Delete" onclick="quickDelete('${k.id}')">🗑️</button>
+      </div>`;
+    list.appendChild(item);
+  });
+  $('show-more-btn').classList.toggle('hidden', allKicks.length <= LIMIT || logsExpanded);
+}
+
+window.showAllLogs = function() {
+  logsExpanded = true;
+  renderLogs();
+};
+
+// ══ Knowledge panel ══════════════════════════════════════════════════════════
+function buildKnowledge() {
+  const week = gestWeek();
+  const k = getKnowledge(week);
+  $('knowledge-panel').innerHTML = `
+    <div class="knowledge-card">
+      <div class="kn-week">Week ${week} Guidance · NHS &amp; Tommy's</div>
+      <div class="kn-title">${k.title}</div>
+      <ul class="kn-points">${k.points.map(p=>`<li>${p}</li>`).join('')}</ul>
+      ${k.alert ? `<div class="kn-alert"><strong>⚠️ When to contact your midwife</strong>${k.alert}</div>` : ''}
+    </div>`;
+}
+
+// ══ Log kick ══════════════════════════════════════════════════════════════════
+window.logKick = async function() {
+  const timeVal = $('kick-time').value;
+  const ts = timeFromStr(timeVal);
+  const note = $('note-area').value.trim();
+  const btn = $('log-kick-btn');
+  btn.textContent = 'Logging...'; btn.disabled = true;
+  try {
+    const ref = await addDoc(kicksCol, {
+      ts: Timestamp.fromDate(ts), loggedAt: Timestamp.fromDate(new Date()),
+      type: kickType, intensity: kickInt, method: 'individual',
+      sessionCount: null, sessionDuration: null, note, gestWeek: gestWeek()
+    });
+    lastId = ref.id;
+    btn.textContent = '✓ Logged!'; btn.classList.add('success');
+    $('note-area').value = '';
+    showUndo('kick-undo');
+    setTimeout(() => { btn.textContent = 'Log Movement'; btn.classList.remove('success'); btn.disabled=false; }, 2000);
+  } catch(e) {
+    console.error(e); btn.textContent='Log Movement'; btn.disabled=false;
+  }
+};
+
+// ══ Log session ══════════════════════════════════════════════════════════════
+window.logSession = async function() {
+  const timeVal  = $('sess-time').value;
+  const ts       = timeFromStr(timeVal);
+  const count    = parseInt($('sess-count').value) || 10;
+  const duration = parseInt($('sess-dur').value)   || null;
+  const note     = $('snote-area').value.trim();
+  const btn      = $('log-sess-btn');
+  btn.textContent = 'Logging...'; btn.disabled = true;
+  try {
+    const ref = await addDoc(kicksCol, {
+      ts: Timestamp.fromDate(ts), loggedAt: Timestamp.fromDate(new Date()),
+      type: sessType, intensity: sessInt, method: 'session',
+      sessionCount: count, sessionDuration: duration, note, gestWeek: gestWeek()
+    });
+    lastId = ref.id;
+    btn.textContent = '✓ Session Logged!'; btn.classList.add('success');
+    $('snote-area').value = '';
+    showUndo('sess-undo');
+    setTimeout(() => { btn.textContent='Log Session'; btn.classList.remove('success'); btn.disabled=false; }, 2000);
+  } catch(e) {
+    console.error(e); btn.textContent='Log Session'; btn.disabled=false;
+  }
+};
+
+// ══ Undo ══════════════════════════════════════════════════════════════════════
+function showUndo(barId) {
+  if (undoTimer) clearInterval(undoTimer);
+  const bar = $(barId);
+  bar.className = 'undo-bar';
+  let secs = 30;
+  const render = () => { bar.innerHTML = `<span>Entry logged</span><button class="undo-btn" onclick="undoLast()">Undo (${secs}s)</button>`; };
+  render();
+  undoTimer = setInterval(() => {
+    secs--;
+    if (secs <= 0) { clearInterval(undoTimer); bar.className='hidden'; lastId=null; }
+    else render();
+  }, 1000);
+}
+
+window.undoLast = async function() {
+  if (!lastId) return;
+  try { await deleteDoc(doc(db,'kicks',lastId)); lastId=null; $('kick-undo').className='hidden'; $('sess-undo').className='hidden'; clearInterval(undoTimer); }
+  catch(e) { console.error(e); }
+};
+
+// ══ Edit modal ════════════════════════════════════════════════════════════════
+window.openEdit = function(id) {
+  const k = allKicks.find(x => x.id===id); if (!k) return;
+  editingId = id; editType = k.type||'kick'; editInt = k.intensity||'medium';
+  document.querySelectorAll('#etype-grid .type-btn').forEach(b => b.classList.toggle('active', b.dataset.type===editType));
+  document.querySelectorAll('#eint-grid .int-btn').forEach(b => {
+    b.classList.remove('active');
+    if (b.dataset.int===editInt) b.classList.add('active');
+  });
+  const ts = k.ts?.toDate();
+  if (ts) { const p=pad; $('edit-time').value = `${ts.getFullYear()}-${p(ts.getMonth()+1)}-${p(ts.getDate())}T${p(ts.getHours())}:${p(ts.getMinutes())}`; }
+  $('edit-note').value = k.note||'';
+  $('edit-modal').classList.remove('hidden');
+};
+
+window.closeModal = function() { $('edit-modal').classList.add('hidden'); editingId=null; };
+
+window.handleOverlayClick = function(e) { if (e.target===e.currentTarget) closeModal(); };
+
+window.saveEdit = async function() {
+  if (!editingId) return;
+  const timeVal = $('edit-time').value;
+  const updates = { type: editType, intensity: editInt, note: $('edit-note').value.trim() };
+  if (timeVal) updates.ts = Timestamp.fromDate(new Date(timeVal));
+  try { await updateDoc(doc(db,'kicks',editingId), updates); closeModal(); }
+  catch(e) { console.error(e); }
+};
+
+window.deleteEntry = async function() {
+  if (!editingId) return;
+  if (!confirm('Delete this entry?')) return;
+  try { await deleteDoc(doc(db,'kicks',editingId)); closeModal(); }
+  catch(e) { console.error(e); }
+};
+
+window.quickDelete = async function(id) {
+  if (!confirm('Delete this entry?')) return;
+  try { await deleteDoc(doc(db,'kicks',id)); }
+  catch(e) { console.error(e); }
+};
+
+// ══ Selection helpers ════════════════════════════════════════════════════════
+window.selectType = function(btn, gridId, stateKey) {
+  document.querySelectorAll(`#${gridId} .type-btn`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (stateKey==='kickType') kickType = btn.dataset.type;
+  else if (stateKey==='sessType') sessType = btn.dataset.type;
+  else if (stateKey==='editType') editType = btn.dataset.type;
+};
+
+window.selectInt = function(btn, gridId, stateKey) {
+  document.querySelectorAll(`#${gridId} .int-btn`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (stateKey==='kickInt') kickInt = btn.dataset.int;
+  else if (stateKey==='sessInt') sessInt = btn.dataset.int;
+  else if (stateKey==='editInt') editInt = btn.dataset.int;
+};
+
+// ══ Log tab ══════════════════════════════════════════════════════════════════
+window.switchLogTab = function(tab) {
+  $('tab-kick').classList.toggle('active', tab==='kick');
+  $('tab-session').classList.toggle('active', tab==='session');
+  $('kick-form').classList.toggle('hidden', tab!=='kick');
+  $('session-form').classList.toggle('hidden', tab!=='session');
+};
+
+// ══ Time helpers ══════════════════════════════════════════════════════════════
+window.setNow = function(id) { $(id).value = nowTimeStr(); };
+
+function timeFromStr(str) {
+  if (!str) return new Date();
+  const [h,m] = str.split(':').map(Number);
+  const d = new Date(); d.setHours(h,m,0,0); return d;
+}
+
+// ══ Note toggles ══════════════════════════════════════════════════════════════
+window.toggleNote = function(areaId, togId) {
+  const area = $(areaId), tog = $(togId);
+  const hidden = area.classList.toggle('hidden');
+  tog.textContent = hidden ? '+ Add note' : '− Remove note';
+};
+
+// ══ Session timer ════════════════════════════════════════════════════════════
+window.startTimer = function() {
+  if (timerRunning) return;
+  timerRunning = true;
+  $('t-start').classList.add('hidden');
+  $('t-stop').classList.remove('hidden');
+  timerInterval = setInterval(() => {
+    timerSecs++;
+    const m=Math.floor(timerSecs/60), s=timerSecs%60;
+    $('timer-display').textContent = `${pad(m)}:${pad(s)}`;
+  }, 1000);
+};
+
+window.stopTimer = function() {
+  if (!timerRunning) return;
+  clearInterval(timerInterval); timerRunning=false;
+  $('t-start').classList.remove('hidden');
+  $('t-stop').classList.add('hidden');
+  const mins = Math.round(timerSecs/60);
+  if (mins > 0) $('sess-dur').value = mins;
+  setNow('sess-time');
+};
+
+window.resetTimer = function() {
+  clearInterval(timerInterval); timerRunning=false; timerSecs=0;
+  $('timer-display').textContent = '00:00';
+  $('t-start').classList.remove('hidden');
+  $('t-stop').classList.add('hidden');
+};
+
+// ══ Export CSV ════════════════════════════════════════════════════════════════
+window.exportCSV = function() {
+  const rows = [['Date','Time','Type','Intensity','Method','Movement Count','Duration (min)','Note','Gest. Week']];
+  allKicks.forEach(k => {
+    const ts = k.ts?.toDate(); if (!ts) return;
+    rows.push([
+      ts.toLocaleDateString(), fmtTime(ts),
+      k.type||'', k.intensity||'', k.method||'individual',
+      k.method==='session' ? (k.sessionCount||'') : 1,
+      k.method==='session' ? (k.sessionDuration||'') : '',
+      k.note ? `"${k.note.replace(/"/g,'""')}"` : '',
+      k.gestWeek||''
+    ]);
+  });
+  const csv  = rows.map(r=>r.join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download=`kickcounter_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+};
+</script>
+</body>
+</html>
