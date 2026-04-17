@@ -20,7 +20,6 @@
       --text: #1e1b4b;
       --muted: #6b7280;
       --success: #059669;
-      --warning: #d97706;
       --danger: #dc2626;
     }
 
@@ -34,60 +33,38 @@
     }
 
     /* ── Gate ── */
-    #gate {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .gate-card {
-      background: white;
-      border-radius: 24px;
-      padding: 40px 28px 32px;
-      width: 100%;
-      max-width: 360px;
-      box-shadow: 0 12px 40px rgba(124,58,237,0.14);
-      text-align: center;
-    }
+    #gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .gate-card { background: white; border-radius: 24px; padding: 40px 28px 32px; width: 100%; max-width: 360px; box-shadow: 0 12px 40px rgba(124,58,237,0.14); text-align: center; }
     .gate-icon { font-size: 52px; margin-bottom: 14px; }
     .gate-title { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 6px; }
     .gate-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
-    .gate-input {
-      width: 100%; padding: 14px 16px; border: 2px solid var(--border);
-      border-radius: 14px; font-size: 20px; text-align: center;
-      font-family: inherit; letter-spacing: 6px; outline: none;
-      transition: border-color 0.2s; color: var(--text);
-    }
+    .gate-input { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 14px; font-size: 20px; text-align: center; font-family: inherit; letter-spacing: 6px; outline: none; transition: border-color 0.2s; color: var(--text); }
     .gate-input:focus { border-color: var(--primary); }
     .gate-input.error { border-color: var(--danger); animation: shake 0.35s; }
-    .gate-btn {
-      width: 100%; margin-top: 14px; padding: 15px;
-      border: none; border-radius: 14px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: white; font-size: 16px; font-weight: 700;
-      font-family: inherit; cursor: pointer; transition: opacity 0.2s;
-      letter-spacing: 0.3px;
-    }
+    .gate-btn { width: 100%; margin-top: 14px; padding: 15px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; transition: opacity 0.2s; }
     .gate-btn:hover { opacity: 0.9; }
     .gate-err { color: var(--danger); font-size: 13px; margin-top: 10px; min-height: 18px; }
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
 
     /* ── App ── */
     #app { display: none; max-width: 480px; margin: 0 auto; padding: 0 16px; }
 
     /* ── Header ── */
-    .hdr { text-align: center; padding: 28px 0 20px; }
+    .hdr { text-align: center; padding: 28px 0 16px; }
     .hdr-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--primary); font-weight: 700; margin-bottom: 6px; }
     .hdr-title { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.1; }
-    .hdr-badges { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    .hdr-meta { margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
     .badge { font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 99px; }
     .badge-week { background: var(--primary-light); color: var(--primary); }
-    .badge-due { background: var(--accent-light); color: var(--accent); }
+    .badge-due  { background: var(--accent-light);  color: var(--accent); }
+
+    /* ── Nav rows ── */
+    .nav-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
+    .nav-btn { background: white; border: 1.5px solid var(--border); border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: all 0.15s; color: var(--primary); flex-shrink: 0; }
+    .nav-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+    .nav-btn:disabled { opacity: 0.35; cursor: default; }
+    .nav-label { font-size: 14px; font-weight: 700; min-width: 130px; text-align: center; color: var(--text); }
+    .nav-label.today { color: var(--primary); }
 
     /* ── Card ── */
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(124,58,237,0.06); }
@@ -105,15 +82,15 @@
     .goal-ring-wrap canvas { display: block; }
     .goal-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .goal-ring-pct { font-size: 13px; font-weight: 700; color: var(--primary); line-height: 1; }
-    .goal-ring-of { font-size: 9px; color: var(--muted); font-weight: 600; }
+    .goal-ring-of  { font-size: 9px; color: var(--muted); font-weight: 600; }
     .goal-info { flex: 1; min-width: 0; }
     .goal-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
-    .goal-sub { font-size: 11px; color: var(--muted); line-height: 1.45; }
+    .goal-sub   { font-size: 11px; color: var(--muted); line-height: 1.45; }
 
     /* ── Timeline ── */
     .section-lbl { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 7px; }
     .timeline-strip { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; height: 26px; }
-    .tl-cell { border-radius: 3px; background: #e9d5ff; position: relative; }
+    .tl-cell { border-radius: 3px; background: #e9d5ff; }
     .tl-cell.lit { background: var(--primary); }
     .tl-cell.now { outline: 2px solid var(--accent); outline-offset: 1px; }
     .timeline-hours { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); margin-top: 4px; }
@@ -121,18 +98,12 @@
     /* ── Alert ── */
     .alert-box { border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
     .alert-box.warn { background: #fffbeb; border: 1px solid #fde68a; }
-    .alert-box.ok { background: #ecfdf5; border: 1px solid #6ee7b7; }
-    .alert-box.info { background: var(--primary-light); border: 1px solid var(--border); }
+    .alert-box.ok   { background: #ecfdf5; border: 1px solid #6ee7b7; }
     .alert-icon { font-size: 18px; flex-shrink: 0; }
     .alert-text { font-size: 12px; line-height: 1.5; }
     .alert-text strong { display: block; font-size: 13px; margin-bottom: 2px; }
 
-    /* ── Log tabs ── */
-    .pill-tabs { display: flex; background: var(--bg); border-radius: 12px; padding: 3px; margin-bottom: 16px; }
-    .pill-tab { flex: 1; padding: 9px 6px; border: none; border-radius: 10px; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); transition: all 0.18s; }
-    .pill-tab.active { background: white; color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-
-    /* ── Type grid ── */
+    /* ── Pickers ── */
     .picker-lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
     .type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
     .type-btn { padding: 11px 8px; border: 2px solid var(--border); border-radius: 12px; background: white; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; text-align: center; color: var(--text); }
@@ -140,13 +111,21 @@
     .type-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
     .type-btn:active { transform: scale(0.96); }
 
-    /* ── Intensity ── */
     .int-row { display: flex; gap: 8px; margin-bottom: 14px; }
     .int-btn { flex: 1; padding: 10px 4px; border: 2px solid var(--border); border-radius: 10px; background: white; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; color: var(--muted); }
     .int-btn.active.gentle { border-color: #34d399; background: #d1fae5; color: #065f46; }
     .int-btn.active.medium { border-color: #f59e0b; background: #fef3c7; color: #92400e; }
     .int-btn.active.strong { border-color: #ef4444; background: #fee2e2; color: #991b1b; }
     .int-btn:active { transform: scale(0.96); }
+
+    /* ── Count row ── */
+    .count-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .count-quick { display: flex; gap: 6px; }
+    .count-q-btn { padding: 9px 14px; border: 2px solid var(--border); border-radius: 10px; background: white; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; color: var(--muted); transition: all 0.15s; }
+    .count-q-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+    .count-q-btn:active { transform: scale(0.96); }
+    .count-inp { width: 70px; padding: 9px 10px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 700; text-align: center; outline: none; transition: border-color 0.2s; color: var(--text); background: white; }
+    .count-inp:focus { border-color: var(--primary); }
 
     /* ── Time row ── */
     .time-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
@@ -157,7 +136,7 @@
     .now-btn:hover { border-color: var(--primary); background: var(--primary-light); }
 
     /* ── Note ── */
-    .note-toggle { background: none; border: none; font-family: inherit; font-size: 12px; color: var(--muted); cursor: pointer; padding: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 4px; }
+    .note-toggle { background: none; border: none; font-family: inherit; font-size: 12px; color: var(--muted); cursor: pointer; padding: 0; margin-bottom: 10px; }
     .note-inp { width: 100%; padding: 10px 12px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; outline: none; margin-bottom: 14px; resize: none; transition: border-color 0.2s; }
     .note-inp:focus { border-color: var(--primary); }
 
@@ -172,25 +151,14 @@
     .undo-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding: 10px 14px; background: var(--primary-light); border-radius: 10px; font-size: 13px; color: var(--primary); font-weight: 500; }
     .undo-btn { background: none; border: none; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--primary); cursor: pointer; text-decoration: underline; }
 
-    /* ── Session fields ── */
-    .session-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-    .session-field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
-    .session-inp { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 18px; font-weight: 700; outline: none; text-align: center; transition: border-color 0.2s; color: var(--text); background: white; }
-    .session-inp:focus { border-color: var(--primary); }
-
-    /* ── Timer ── */
-    .timer-display { text-align: center; font-size: 44px; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; padding: 10px 0 14px; letter-spacing: 2px; }
-    .timer-btns { display: flex; gap: 8px; margin-bottom: 14px; }
-    .t-btn { flex: 1; padding: 13px; border: 2px solid var(--border); border-radius: 12px; background: white; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
-    .t-btn.t-start { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
-    .t-btn.t-stop { border-color: var(--danger); background: #fee2e2; color: var(--danger); }
-    .t-btn.t-reset { color: var(--muted); }
-
     /* ── Divider ── */
     .divider { height: 1px; background: var(--border); margin: 14px 0; }
 
     /* ── Charts ── */
     .chart-wrap { position: relative; height: 190px; margin-bottom: 4px; }
+    .pill-tabs { display: flex; background: var(--bg); border-radius: 12px; padding: 3px; margin-bottom: 16px; }
+    .pill-tab { flex: 1; padding: 9px 6px; border: none; border-radius: 10px; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); transition: all 0.18s; }
+    .pill-tab.active { background: white; color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 
     /* ── Heatmap ── */
     .heatmap-wrap { overflow-x: auto; }
@@ -198,6 +166,7 @@
     .hm-row { display: grid; grid-template-columns: 30px repeat(24, 1fr); gap: 2px; }
     .hm-day { font-size: 10px; color: var(--muted); font-weight: 600; display: flex; align-items: center; }
     .hm-cell { height: 14px; border-radius: 2px; background: #e9d5ff; }
+    .hm-cell.active { background: var(--primary); }
     .hm-hour-row { display: grid; grid-template-columns: 30px repeat(24, 1fr); gap: 2px; margin-top: 3px; }
     .hm-hour { font-size: 8px; color: var(--muted); text-align: center; }
 
@@ -212,7 +181,7 @@
     .int-badge.gentle { background: #d1fae5; color: #065f46; }
     .int-badge.medium { background: #fef3c7; color: #92400e; }
     .int-badge.strong { background: #fee2e2; color: #991b1b; }
-    .session-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; background: var(--primary-light); color: var(--primary); }
+    .count-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; background: var(--primary-light); color: var(--primary); }
     .log-time { font-size: 11px; color: var(--muted); }
     .log-note { font-size: 11px; color: var(--muted); margin-top: 2px; font-style: italic; }
     .log-actions { display: flex; gap: 2px; flex-shrink: 0; }
@@ -221,7 +190,10 @@
 
     /* ── Knowledge ── */
     .knowledge-card { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%); border-radius: 18px; padding: 22px; margin-bottom: 14px; }
-    .kn-week { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #a5b4fc; margin-bottom: 8px; }
+    .kn-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .kn-nav-btn { background: rgba(255,255,255,0.12); border: none; border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #a5b4fc; font-size: 16px; transition: background 0.15s; flex-shrink: 0; }
+    .kn-nav-btn:hover { background: rgba(255,255,255,0.2); }
+    .kn-week { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #a5b4fc; }
     .kn-title { font-family: 'Playfair Display', serif; font-size: 19px; color: white; margin-bottom: 14px; line-height: 1.3; }
     .kn-points { list-style: none; display: flex; flex-direction: column; gap: 9px; }
     .kn-points li { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: #e0e7ff; }
@@ -234,25 +206,25 @@
     .export-btn:hover { border-color: var(--primary); background: var(--primary-light); }
 
     /* ── Modal ── */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(3px); z-index: 100; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 0; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(3px); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
     .modal { background: white; border-radius: 22px 22px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 480px; }
     .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 18px; }
     .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
     .modal-btn { flex: 1; padding: 14px; border-radius: 12px; border: none; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
     .m-cancel { background: var(--bg); color: var(--muted); }
     .m-delete { background: #fee2e2; color: var(--danger); }
-    .m-save { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+    .m-save   { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
 
     /* ── Utils ── */
     .hidden { display: none !important; }
-    .show-more { background: none; border: none; font-family: inherit; font-size: 13px; color: var(--primary); cursor: pointer; font-weight: 600; padding: 10px 0 0; display: flex; align-items: center; gap: 4px; }
+    .show-more { background: none; border: none; font-family: inherit; font-size: 13px; color: var(--primary); cursor: pointer; font-weight: 600; padding: 10px 0 0; }
     .empty-state { text-align: center; padding: 28px 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
     .empty-state .es-icon { font-size: 36px; margin-bottom: 8px; }
   </style>
 </head>
 <body>
 
-<!-- ══ Passphrase Gate ══════════════════════════════════════════════════════ -->
+<!-- ══ Gate ════════════════════════════════════════════════════════════════ -->
 <div id="gate">
   <div class="gate-card">
     <div class="gate-icon">🍼</div>
@@ -264,22 +236,36 @@
   </div>
 </div>
 
-<!-- ══ App ══════════════════════════════════════════════════════════════════ -->
+<!-- ══ App ═════════════════════════════════════════════════════════════════ -->
 <div id="app">
 
   <!-- Header -->
   <div class="hdr">
     <div class="hdr-eyebrow">Baby Movement Tracker</div>
     <h1 class="hdr-title">KickCounter</h1>
-    <div class="hdr-badges">
+    <div class="hdr-meta">
       <span class="badge badge-week" id="week-badge">Week —</span>
-      <span class="badge badge-due" id="due-badge">Due Aug 6</span>
+      <span class="badge badge-due"  id="due-badge">Due Aug 6</span>
+    </div>
+
+    <!-- Day navigation -->
+    <div class="nav-row" style="margin-top:12px">
+      <button class="nav-btn" id="day-prev" onclick="navigateDay(-1)">‹</button>
+      <span class="nav-label" id="day-label">Today</span>
+      <button class="nav-btn" id="day-next" onclick="navigateDay(1)">›</button>
+    </div>
+
+    <!-- Week navigation -->
+    <div class="nav-row" style="margin-top:6px">
+      <button class="nav-btn" onclick="navigateWeek(-1)">‹</button>
+      <span class="nav-label" id="week-label">Week —</span>
+      <button class="nav-btn" onclick="navigateWeek(1)">›</button>
     </div>
   </div>
 
-  <!-- Today's Activity -->
+  <!-- Activity for selected day -->
   <div class="card">
-    <div class="card-title">Today's Activity</div>
+    <div class="card-title" id="activity-title">Today's Activity</div>
     <div class="stat-row">
       <div class="stat-box"><div class="stat-val" id="stat-count">—</div><div class="stat-lbl">Movements</div></div>
       <div class="stat-box"><div class="stat-val" id="stat-last">—</div><div class="stat-lbl">Since Last</div></div>
@@ -296,107 +282,58 @@
       </div>
       <div class="goal-info">
         <div class="goal-title" id="goal-title">Daily goal</div>
-        <div class="goal-sub" id="goal-sub">Loading...</div>
+        <div class="goal-sub"   id="goal-sub">Loading...</div>
       </div>
     </div>
 
-    <div class="section-lbl">Kicks by hour — today</div>
+    <div class="section-lbl" id="timeline-lbl">Movements by hour</div>
     <div class="timeline-strip" id="timeline"></div>
     <div class="timeline-hours"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>11pm</span></div>
   </div>
 
-  <!-- Pattern alert (injected) -->
+  <!-- Pattern alert -->
   <div id="alert-area"></div>
 
   <!-- Log Movement -->
   <div class="card">
     <div class="card-title">Log Movement</div>
 
-    <div class="pill-tabs">
-      <button class="pill-tab active" id="tab-kick" onclick="switchLogTab('kick')">Individual Kick</button>
-      <button class="pill-tab" id="tab-session" onclick="switchLogTab('session')">Count Session</button>
+    <div class="picker-lbl">Movement Type</div>
+    <div class="type-grid" id="type-grid">
+      <button class="type-btn active" data-type="kick"   onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">🦶</span>Kick</button>
+      <button class="type-btn"        data-type="roll"   onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">🌀</span>Roll</button>
+      <button class="type-btn"        data-type="hiccup" onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">💨</span>Hiccup</button>
+      <button class="type-btn"        data-type="jab"    onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">👊</span>Jab</button>
     </div>
 
-    <!-- ── Individual kick form ── -->
-    <div id="kick-form">
-      <div class="picker-lbl">Movement Type</div>
-      <div class="type-grid" id="type-grid">
-        <button class="type-btn active" data-type="kick" onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">🦶</span>Kick</button>
-        <button class="type-btn" data-type="roll" onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">🌀</span>Roll</button>
-        <button class="type-btn" data-type="hiccup" onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">💨</span>Hiccup</button>
-        <button class="type-btn" data-type="jab" onclick="selectType(this,'type-grid','kickType')"><span class="type-emoji">👊</span>Jab</button>
-      </div>
-
-      <div class="picker-lbl">Intensity</div>
-      <div class="int-row" id="int-grid">
-        <button class="int-btn gentle" data-int="gentle" onclick="selectInt(this,'int-grid','kickInt')">Gentle</button>
-        <button class="int-btn active medium" data-int="medium" onclick="selectInt(this,'int-grid','kickInt')">Medium</button>
-        <button class="int-btn strong" data-int="strong" onclick="selectInt(this,'int-grid','kickInt')">Strong</button>
-      </div>
-
-      <div class="time-row">
-        <label>Time</label>
-        <input type="time" class="time-inp" id="kick-time">
-        <button class="now-btn" onclick="setNow('kick-time')">Now</button>
-      </div>
-
-      <button class="note-toggle" id="note-tog" onclick="toggleNote('note-area','note-tog')">+ Add note</button>
-      <textarea id="note-area" class="note-inp hidden" rows="2" placeholder="Optional note..."></textarea>
-
-      <button class="log-btn" id="log-kick-btn" onclick="logKick()">Log Movement</button>
-      <div id="kick-undo" class="hidden"></div>
+    <div class="picker-lbl">Intensity</div>
+    <div class="int-row" id="int-grid">
+      <button class="int-btn gentle" data-int="gentle" onclick="selectInt(this,'int-grid','kickInt')">Gentle</button>
+      <button class="int-btn active medium" data-int="medium" onclick="selectInt(this,'int-grid','kickInt')">Medium</button>
+      <button class="int-btn strong" data-int="strong" onclick="selectInt(this,'int-grid','kickInt')">Strong</button>
     </div>
 
-    <!-- ── Session form ── -->
-    <div id="session-form" class="hidden">
-      <div class="picker-lbl">Predominant Movement Type</div>
-      <div class="type-grid" id="stype-grid">
-        <button class="type-btn active" data-type="kick" onclick="selectType(this,'stype-grid','sessType')"><span class="type-emoji">🦶</span>Kick</button>
-        <button class="type-btn" data-type="roll" onclick="selectType(this,'stype-grid','sessType')"><span class="type-emoji">🌀</span>Roll</button>
-        <button class="type-btn" data-type="hiccup" onclick="selectType(this,'stype-grid','sessType')"><span class="type-emoji">💨</span>Hiccup</button>
-        <button class="type-btn" data-type="jab" onclick="selectType(this,'stype-grid','sessType')"><span class="type-emoji">👊</span>Jab</button>
+    <div class="picker-lbl">Count</div>
+    <div class="count-row">
+      <div class="count-quick">
+        <button class="count-q-btn active" data-n="1"  onclick="selectCount(this)">1</button>
+        <button class="count-q-btn"        data-n="5"  onclick="selectCount(this)">5</button>
+        <button class="count-q-btn"        data-n="10" onclick="selectCount(this)">10</button>
       </div>
-
-      <div class="picker-lbl">Intensity</div>
-      <div class="int-row" id="sint-grid">
-        <button class="int-btn gentle" data-int="gentle" onclick="selectInt(this,'sint-grid','sessInt')">Gentle</button>
-        <button class="int-btn active medium" data-int="medium" onclick="selectInt(this,'sint-grid','sessInt')">Medium</button>
-        <button class="int-btn strong" data-int="strong" onclick="selectInt(this,'sint-grid','sessInt')">Strong</button>
-      </div>
-
-      <div class="divider"></div>
-      <div class="picker-lbl">Session Timer</div>
-      <div class="timer-display" id="timer-display">00:00</div>
-      <div class="timer-btns">
-        <button class="t-btn t-start" id="t-start" onclick="startTimer()">▶ Start</button>
-        <button class="t-btn t-stop hidden" id="t-stop" onclick="stopTimer()">■ Stop</button>
-        <button class="t-btn t-reset" id="t-reset" onclick="resetTimer()">↺</button>
-      </div>
-
-      <div class="divider"></div>
-      <div class="session-pair">
-        <div class="session-field">
-          <label>Movement Count</label>
-          <input type="number" class="session-inp" id="sess-count" value="10" min="1" max="100">
-        </div>
-        <div class="session-field">
-          <label>Duration (min)</label>
-          <input type="number" class="session-inp" id="sess-dur" placeholder="e.g. 30" min="1" max="300">
-        </div>
-      </div>
-
-      <div class="time-row">
-        <label>Time</label>
-        <input type="time" class="time-inp" id="sess-time">
-        <button class="now-btn" onclick="setNow('sess-time')">Now</button>
-      </div>
-
-      <button class="note-toggle" id="snote-tog" onclick="toggleNote('snote-area','snote-tog')">+ Add note</button>
-      <textarea id="snote-area" class="note-inp hidden" rows="2" placeholder="Optional note..."></textarea>
-
-      <button class="log-btn" id="log-sess-btn" onclick="logSession()">Log Session</button>
-      <div id="sess-undo" class="hidden"></div>
+      <input type="number" class="count-inp" id="count-inp" value="1" min="1" max="99" oninput="onCountInput(this)">
     </div>
+
+    <div class="time-row">
+      <label>Time</label>
+      <input type="time" class="time-inp" id="kick-time">
+      <button class="now-btn" onclick="setNow('kick-time')">Now</button>
+    </div>
+
+    <button class="note-toggle" id="note-tog" onclick="toggleNote('note-area','note-tog')">+ Add note</button>
+    <textarea id="note-area" class="note-inp hidden" rows="2" placeholder="Optional note..."></textarea>
+
+    <button class="log-btn" id="log-kick-btn" onclick="logKick()">Log Movement</button>
+    <div id="kick-undo" class="hidden"></div>
   </div>
 
   <!-- Summary -->
@@ -404,8 +341,8 @@
     <div class="card-title">Summary</div>
     <div class="pill-tabs" id="sum-tabs">
       <button class="pill-tab active" onclick="switchSumTab('day',this)">Day</button>
-      <button class="pill-tab" onclick="switchSumTab('week',this)">Week</button>
-      <button class="pill-tab" onclick="switchSumTab('month',this)">Month</button>
+      <button class="pill-tab"        onclick="switchSumTab('week',this)">Week</button>
+      <button class="pill-tab"        onclick="switchSumTab('month',this)">Month</button>
     </div>
     <div class="chart-wrap"><canvas id="sum-chart"></canvas></div>
   </div>
@@ -435,17 +372,17 @@
 
 </div><!-- #app -->
 
-<!-- ══ Edit Modal ═══════════════════════════════════════════════════════════ -->
+<!-- ══ Edit Modal ══════════════════════════════════════════════════════════ -->
 <div id="edit-modal" class="modal-overlay hidden" onclick="handleOverlayClick(event)">
   <div class="modal">
     <div class="modal-title">Edit Entry</div>
 
     <div class="picker-lbl">Movement Type</div>
     <div class="type-grid" id="etype-grid">
-      <button class="type-btn" data-type="kick" onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">🦶</span>Kick</button>
-      <button class="type-btn" data-type="roll" onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">🌀</span>Roll</button>
+      <button class="type-btn" data-type="kick"   onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">🦶</span>Kick</button>
+      <button class="type-btn" data-type="roll"   onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">🌀</span>Roll</button>
       <button class="type-btn" data-type="hiccup" onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">💨</span>Hiccup</button>
-      <button class="type-btn" data-type="jab" onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">👊</span>Jab</button>
+      <button class="type-btn" data-type="jab"    onclick="selectType(this,'etype-grid','editType')"><span class="type-emoji">👊</span>Jab</button>
     </div>
 
     <div class="picker-lbl">Intensity</div>
@@ -456,7 +393,7 @@
     </div>
 
     <div class="time-row" style="margin-top:4px">
-      <label>Date & Time</label>
+      <label>Date &amp; Time</label>
       <input type="datetime-local" class="time-inp" id="edit-time" style="flex:1">
     </div>
 
@@ -466,7 +403,7 @@
     <div class="modal-actions">
       <button class="modal-btn m-cancel" onclick="closeModal()">Cancel</button>
       <button class="modal-btn m-delete" onclick="deleteEntry()">Delete</button>
-      <button class="modal-btn m-save" onclick="saveEdit()">Save</button>
+      <button class="modal-btn m-save"   onclick="saveEdit()">Save</button>
     </div>
   </div>
 </div>
@@ -474,61 +411,52 @@
 <script type="module">
 // ══════════════════════════════════════════════════════════════════════════════
 // FIREBASE SETUP
-// 1. Go to https://console.firebase.google.com → create a new project (e.g. "kickcounter")
-// 2. Add a Web app → copy the firebaseConfig object into the block below
-// 3. Enable Firestore Database → in Rules tab, paste:
-//    rules_version = '2';
-//    service cloud.firestore {
-//      match /databases/{database}/documents {
-//        match /{document=**} { allow read, write: if true; }
-//      }
-//    }
+// 1. Go to https://console.firebase.google.com → create/open your project
+// 2. Firestore Database → Rules → paste: allow read, write: if true;
 // ══════════════════════════════════════════════════════════════════════════════
-import { initializeApp }           from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { initializeApp }    from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc,
          doc, onSnapshot, query, orderBy, Timestamp }
   from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCiR2yH3cCwC8A7gK4ls8-ODdKoPlxU19s",
-  authDomain: "kickcounter-48185.firebaseapp.com",
-  projectId: "kickcounter-48185",
-  storageBucket: "kickcounter-48185.firebasestorage.app",
+  apiKey:            "AIzaSyCiR2yH3cCwC8A7gK4ls8-ODdKoPlxU19s",
+  authDomain:        "kickcounter-48185.firebaseapp.com",
+  projectId:         "kickcounter-48185",
+  storageBucket:     "kickcounter-48185.firebasestorage.app",
   messagingSenderId: "252826712886",
-  appId: "1:252826712886:web:3ac8c44aa6853dd65f9197"
+  appId:             "1:252826712886:web:3ac8c44aa6853dd65f9197"
 };
 
-// ══ Constants ════════════════════════════════════════════════════════════════
-const PASSPHRASE  = "babu";
-const DUE_DATE    = new Date("2026-08-06T00:00:00");
-const AUTH_KEY    = "kc_auth_v1";
-const TYPE_EMOJI  = { kick:'🦶', roll:'🌀', hiccup:'💨', jab:'👊' };
+// ══ Constants ═════════════════════════════════════════════════════════════════
+const PASSPHRASE = "babu";
+const DUE_DATE   = new Date("2026-08-06T00:00:00");
+const AUTH_KEY   = "kc_auth_v1";
+const TYPE_EMOJI = { kick:'🦶', roll:'🌀', hiccup:'💨', jab:'👊' };
 
-// ══ State ════════════════════════════════════════════════════════════════════
+// ══ State ═════════════════════════════════════════════════════════════════════
 let db, kicksCol;
-let allKicks      = [];
-let kickType      = 'kick';
-let kickInt       = 'medium';
-let sessType      = 'kick';
-let sessInt       = 'medium';
-let editType      = 'kick';
-let editInt       = 'medium';
-let editingId     = null;
-let lastId        = null;
-let undoTimer     = null;
-let timerInterval = null;
-let timerSecs     = 0;
-let timerRunning  = false;
-let sumTab        = 'day';
-let sumChart      = null;
-let goalRing      = null;
-let logsExpanded  = false;
+let allKicks     = [];
+let kickType     = 'kick';
+let kickInt      = 'medium';
+let kickCountVal = 1;
+let editType     = 'kick';
+let editInt      = 'medium';
+let editingId    = null;
+let lastId       = null;
+let undoTimer    = null;
+let sumTab       = 'day';
+let sumChart     = null;
+let goalRing     = null;
+let logsExpanded = false;
+let selectedDate = new Date();        // drives the activity panel & charts
+let knowledgeWeek = null;             // drives the guidance panel (set in bootApp)
 
-// ══ Helpers ══════════════════════════════════════════════════════════════════
+// ══ Helpers ═══════════════════════════════════════════════════════════════════
 const $ = id => document.getElementById(id);
 
-function gestWeek() {
-  const daysLeft = Math.max(0, (DUE_DATE - Date.now()) / 86400000);
+function gestWeek(ref = new Date()) {
+  const daysLeft = Math.max(0, (DUE_DATE - ref) / 86400000);
   return Math.max(24, Math.min(42, Math.floor(40 - daysLeft / 7)));
 }
 
@@ -540,13 +468,12 @@ function dayStart(d = new Date()) {
   const s = new Date(d); s.setHours(0,0,0,0); return s;
 }
 
-function fmtTime(d) {
-  return d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+function isToday(d) {
+  return d.toDateString() === new Date().toDateString();
 }
 
-function fmtDate(d) {
-  return d.toLocaleDateString([], { month:'short', day:'numeric' });
-}
+function fmtTime(d) { return d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); }
+function fmtDate(d) { return d.toLocaleDateString([], { month:'short', day:'numeric' }); }
 
 function timeSince(d) {
   const m = Math.floor((Date.now() - d.getTime()) / 60000);
@@ -563,30 +490,33 @@ function nowTimeStr() {
 
 function pad(n) { return String(n).padStart(2,'0'); }
 
+// kickCount handles existing session records AND new count field
 function kickCount(k) {
-  return k.method === 'session' ? (k.sessionCount || 1) : 1;
+  if (k.count)        return k.count;
+  if (k.sessionCount) return k.sessionCount;
+  return 1;
 }
 
 function goalForWeek(week) {
   if (week < 28) return {
     count: 6,
-    label: 'Get to know baby\'s pattern',
-    sub:   'No fixed daily count yet — notice when baby is most active and track any patterns.'
+    label: 'Learn baby\'s pattern',
+    sub:   'No fixed daily count yet — notice when baby is most active and track patterns.'
   };
   return {
     count: 10,
     label: '10 movements in 2 hours',
-    sub:   'NHS guideline from week 28: if 10 movements take more than 2 hours, contact your midwife.'
+    sub:   'NHS guideline from week 28: if 10 movements take >2 hours, contact your midwife.'
   };
 }
 
-// ══ Weekly knowledge content (sourced from NHS, NHSInform & Tommy's) ════════
+// ══ Weekly knowledge ══════════════════════════════════════════════════════════
 const KNOWLEDGE = {
   24: { title: "Baby is now the size of an ear of corn",
     points: ["You may feel flutters, rolls, kicks and jabs — all normal at this stage.",
-             "No fixed daily kick count is needed yet. Focus on getting to know your baby's unique rhythm.",
-             "Baby tends to be quieter when you're active (your movement soothes them) and livelier when you rest.",
-             "Cold drinks or lying on your left side can encourage movement if you want to feel baby.",
+             "No fixed daily kick count needed yet. Focus on getting to know your baby's unique rhythm.",
+             "Baby tends to be quieter when you're active and livelier when you rest.",
+             "Cold drinks or lying on your left side can encourage movement.",
              "It's OK not to feel movement every single hour at 24 weeks."],
     alert: "Contact your midwife if you feel no movement at all for a full day, or if something doesn't feel right." },
   25: { title: "Baby is developing a regular sleep-wake cycle",
@@ -597,26 +527,26 @@ const KNOWLEDGE = {
              "Gentle pressure on your bump may produce a responsive kick."],
     alert: "If movements slow significantly compared to what has become normal for your baby, contact your midwife." },
   26: { title: "Baby can hear your voice clearly",
-    points: ["Baby responds to sound and may kick more when you talk, play music, or hear loud noises.",
+    points: ["Baby responds to sound and may kick more when you talk or play music.",
              "Movements are becoming stronger and more distinct as baby grows.",
              "You'll likely notice baby is more active after meals or when you're lying still.",
-             "Still no set daily kick target — getting to know your baby's individual pattern is what matters.",
+             "Still no set daily kick target — getting to know your baby's pattern is what matters.",
              "Rolling onto your left side improves circulation and can increase movement."],
     alert: "Any notable reduction compared to your baby's normal pattern is worth a call to your midwife." },
   27: { title: "Final week before the third trimester",
     points: ["Movements should feel more regular and stronger than in earlier weeks.",
              "Baby still has room to do big rolls, but kicks and jabs should be clear and distinct.",
-             "You should have a good sense by now of when baby is typically active.",
+             "You should have a good sense of when baby is typically active.",
              "Don't rely on a fixed daily number — trust your knowledge of YOUR baby's pattern.",
              "Hiccups feel like short, rhythmic pulses and are very common."],
-    alert: "Always contact your midwife if you're worried about your baby's movements. Never wait until the next appointment." },
+    alert: "Always contact your midwife if you're worried about baby's movements. Never wait until the next appointment." },
   28: { title: "Welcome to the third trimester",
-    points: ["From now on, you should feel at least 10 distinct movements in 2 hours during an active period.",
+    points: ["From now on, aim to feel at least 10 distinct movements in 2 hours during an active period.",
              "Baby tends to be most active between 9pm and 1am.",
              "Movements should happen every day — there are no expected 'quiet days' from here on.",
-             "The count-to-10 method: start a session timer and count until you reach 10 movements.",
-             "If 10 movements take more than 2 hours, contact your midwife."],
-    alert: "IMPORTANT: Never use a home doppler as reassurance if you're worried about movement. Dopplers can give false reassurance. Contact your midwife or maternity unit instead." },
+             "If 10 movements take more than 2 hours, contact your midwife.",
+             "Never use a home doppler as reassurance — it can give false comfort."],
+    alert: "IMPORTANT: Never use a home doppler if you're worried about movement. Contact your midwife or maternity unit instead." },
   29: { title: "Baby's senses are almost fully developed",
     points: ["Regular, distinct movements should be felt every day.",
              "Aim for at least 10 movements within a 2-hour window during an active period.",
@@ -708,7 +638,7 @@ function getKnowledge(week) {
   return KNOWLEDGE[w] || KNOWLEDGE[40];
 }
 
-// ══ Gate ═════════════════════════════════════════════════════════════════════
+// ══ Gate ══════════════════════════════════════════════════════════════════════
 function tryUnlock() {
   const val = $('gate-input').value.trim().toLowerCase();
   if (val === PASSPHRASE) {
@@ -735,32 +665,17 @@ if (localStorage.getItem(AUTH_KEY) === '1') {
 
 // ══ Boot ══════════════════════════════════════════════════════════════════════
 function bootApp() {
-  // Check Firebase config
-  if (firebaseConfig.apiKey === 'REPLACE_ME') {
-    $('app').innerHTML = `
-      <div style="padding:40px 24px;text-align:center;font-family:'DM Sans',sans-serif">
-        <div style="font-size:48px;margin-bottom:16px">🔧</div>
-        <h2 style="font-size:20px;margin-bottom:12px;color:#1e1b4b">Firebase Setup Required</h2>
-        <p style="font-size:14px;color:#6b7280;line-height:1.6;max-width:340px;margin:0 auto">
-          Open <strong>kickcounter.html</strong> in a text editor and replace the
-          <code>firebaseConfig</code> values with your Firebase project credentials.<br><br>
-          See the comment block at the top of the &lt;script&gt; for step-by-step instructions.
-        </p>
-      </div>`;
-    return;
-  }
-
-  const fbApp  = initializeApp(firebaseConfig);
-  db           = getFirestore(fbApp);
-  kicksCol     = collection(db, 'kicks');
-
+  knowledgeWeek = gestWeek();
   updateHeader();
   initGoalRing();
   buildTimeline([]);
   buildHeatmap([]);
   buildKnowledge();
   setNow('kick-time');
-  setNow('sess-time');
+
+  const fbApp = initializeApp(firebaseConfig);
+  db          = getFirestore(fbApp);
+  kicksCol    = collection(db, 'kicks');
 
   const q = query(kicksCol, orderBy('ts', 'desc'));
   onSnapshot(q, snap => {
@@ -774,7 +689,40 @@ function updateHeader() {
   const w = gestWeek();
   $('week-badge').textContent = `Week ${w}`;
   $('due-badge').textContent  = `${daysLeft()} days to Aug 6`;
+
+  // Day nav label
+  const isTod = isToday(selectedDate);
+  const dayLbl = $('day-label');
+  dayLbl.textContent = isTod
+    ? 'Today'
+    : selectedDate.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
+  dayLbl.className = `nav-label${isTod ? ' today' : ''}`;
+  $('day-next').disabled = isTod;
+
+  // Week nav label
+  const selWeek = gestWeek(selectedDate);
+  $('week-label').textContent = `Week ${selWeek}`;
 }
+
+// ══ Navigate ══════════════════════════════════════════════════════════════════
+window.navigateDay = function(dir) {
+  const next = new Date(selectedDate);
+  next.setDate(next.getDate() + dir);
+  if (next > new Date()) return;   // can't go into the future
+  selectedDate = next;
+  renderAll();
+};
+
+window.navigateWeek = function(dir) {
+  const next = new Date(selectedDate);
+  next.setDate(next.getDate() + dir * 7);
+  if (next > new Date()) {
+    selectedDate = new Date();     // clamp to today
+  } else {
+    selectedDate = next;
+  }
+  renderAll();
+};
 
 // ══ Render all ════════════════════════════════════════════════════════════════
 function renderAll() {
@@ -786,49 +734,59 @@ function renderAll() {
   renderLogs();
 }
 
-// ══ Today panel ══════════════════════════════════════════════════════════════
+// ══ Today / selected day panel ════════════════════════════════════════════════
 function renderToday() {
-  const today = dayStart();
-  const todayKicks = allKicks.filter(k => k.ts?.toDate() >= today);
-  const todayCount = todayKicks.reduce((s,k) => s + kickCount(k), 0);
+  const isTod = isToday(selectedDate);
+  $('activity-title').textContent = isTod
+    ? "Today's Activity"
+    : selectedDate.toLocaleDateString([], { weekday:'long', month:'long', day:'numeric' });
 
-  // Last kick
-  const lastKick = todayKicks[0]?.ts?.toDate();
-  $('stat-last').textContent = lastKick ? timeSince(lastKick) : '—';
-  $('stat-count').textContent = todayCount;
+  const selStart = dayStart(selectedDate);
+  const selEnd   = new Date(selStart); selEnd.setDate(selEnd.getDate() + 1);
+  const dayKicks = allKicks.filter(k => { const t = k.ts?.toDate(); return t >= selStart && t < selEnd; });
+  const dayTotal = dayKicks.reduce((s,k) => s + kickCount(k), 0);
 
-  // 7-day average
+  $('stat-count').textContent = dayTotal;
+
+  // "Since last" only meaningful for today
+  if (isTod) {
+    const lastKick = dayKicks[0]?.ts?.toDate();
+    $('stat-last').textContent = lastKick ? timeSince(lastKick) : '—';
+  } else {
+    $('stat-last').textContent = '—';
+  }
+
+  // 7-day average (always relative to today)
   const ago7 = new Date(); ago7.setDate(ago7.getDate()-7); ago7.setHours(0,0,0,0);
-  const weekKicks = allKicks.filter(k => k.ts?.toDate() >= ago7);
   const dayTotals = {};
-  weekKicks.forEach(k => {
+  allKicks.filter(k => k.ts?.toDate() >= ago7).forEach(k => {
     const d = k.ts?.toDate(); if (!d) return;
-    const key = d.toDateString();
-    dayTotals[key] = (dayTotals[key] || 0) + kickCount(k);
+    dayTotals[d.toDateString()] = (dayTotals[d.toDateString()] || 0) + kickCount(k);
   });
   const vals = Object.values(dayTotals);
   const avg  = vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
   $('stat-avg').textContent = avg || '—';
 
   // Goal ring
-  const week = gestWeek();
+  const week = gestWeek(selectedDate);
   const goal = goalForWeek(week);
-  const pct  = Math.min(1, todayCount / goal.count);
+  const pct  = Math.min(1, dayTotal / goal.count);
   $('goal-title').textContent = `Goal: ${goal.count} movements`;
   $('goal-sub').textContent   = goal.sub;
   $('goal-pct').textContent   = `${Math.round(pct*100)}%`;
   updateGoalRing(pct);
 
-  // Timeline
-  buildTimeline(todayKicks);
+  // Timeline label
+  $('timeline-lbl').textContent = isTod ? 'Movements by hour — today' : `Movements by hour — ${fmtDate(selectedDate)}`;
+  buildTimeline(dayKicks, isTod);
 }
 
-// ══ Goal ring chart ══════════════════════════════════════════════════════════
+// ══ Goal ring ═════════════════════════════════════════════════════════════════
 function initGoalRing() {
   const ctx = $('goal-ring').getContext('2d');
   goalRing = new Chart(ctx, {
     type: 'doughnut',
-    data: { datasets: [{ data: [0,1], backgroundColor: ['#7c3aed','#ede9fe'], borderWidth: 0, circumference: 270, rotation: -135 }] },
+    data: { datasets: [{ data:[0,1], backgroundColor:['#7c3aed','#ede9fe'], borderWidth:0, circumference:270, rotation:-135 }] },
     options: { responsive:false, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{enabled:false} } }
   });
 }
@@ -836,73 +794,69 @@ function initGoalRing() {
 function updateGoalRing(pct) {
   if (!goalRing) return;
   const color = pct >= 1 ? '#059669' : '#7c3aed';
-  goalRing.data.datasets[0].data = [pct, Math.max(0, 1-pct)];
-  goalRing.data.datasets[0].backgroundColor = [color, '#ede9fe'];
+  goalRing.data.datasets[0].data = [pct, Math.max(0,1-pct)];
+  goalRing.data.datasets[0].backgroundColor = [color,'#ede9fe'];
   goalRing.update('none');
 }
 
 // ══ Timeline ══════════════════════════════════════════════════════════════════
-function buildTimeline(todayKicks) {
+function buildTimeline(dayKicks, showCurrentHour = false) {
   const strip = $('timeline');
   strip.innerHTML = '';
   const curHour = new Date().getHours();
+  const hourHas = Array(24).fill(false);
   const hourCounts = Array(24).fill(0);
-  todayKicks.forEach(k => {
+  dayKicks.forEach(k => {
     const h = k.ts?.toDate().getHours();
-    if (h !== undefined) hourCounts[h] += kickCount(k);
+    if (h !== undefined) { hourHas[h] = true; hourCounts[h] += kickCount(k); }
   });
-  const maxC = Math.max(1, ...hourCounts);
   for (let h = 0; h < 24; h++) {
     const cell = document.createElement('div');
     cell.className = 'tl-cell';
-    if (hourCounts[h] > 0) {
+    if (hourHas[h]) {
       cell.classList.add('lit');
-      cell.style.opacity = 0.35 + 0.65 * (hourCounts[h] / maxC);
       cell.title = `${h}:00 — ${hourCounts[h]} movement${hourCounts[h]>1?'s':''}`;
     }
-    if (h === curHour) cell.classList.add('now');
+    if (showCurrentHour && h === curHour) cell.classList.add('now');
     strip.appendChild(cell);
   }
 }
 
-// ══ Pattern alert ════════════════════════════════════════════════════════════
+// ══ Pattern alert ═════════════════════════════════════════════════════════════
 function renderAlert() {
   const area = $('alert-area');
   const week = gestWeek();
+  if (week < 28 || !isToday(selectedDate)) { area.innerHTML = ''; return; }
 
-  // Don't show alert before week 28
-  if (week < 28) { area.innerHTML = ''; return; }
+  const todStart = dayStart();
+  const todEnd   = new Date(todStart); todEnd.setDate(todEnd.getDate()+1);
+  const todKicks = allKicks.filter(k => { const t=k.ts?.toDate(); return t>=todStart && t<todEnd; });
+  const todCount = todKicks.reduce((s,k) => s+kickCount(k), 0);
+  const goal  = goalForWeek(week);
+  const hour  = new Date().getHours();
 
-  const today = dayStart();
-  const todayKicks = allKicks.filter(k => k.ts?.toDate() >= today);
-  const todayCount = todayKicks.reduce((s,k) => s + kickCount(k), 0);
-  const goal = goalForWeek(week);
-  const hour = new Date().getHours();
-
-  // 7-day avg
   const ago7 = new Date(); ago7.setDate(ago7.getDate()-7); ago7.setHours(0,0,0,0);
   const dayTotals = {};
   allKicks.filter(k => k.ts?.toDate() >= ago7).forEach(k => {
     const d = k.ts?.toDate(); if (!d) return;
-    const key = d.toDateString();
-    dayTotals[key] = (dayTotals[key] || 0) + kickCount(k);
+    dayTotals[d.toDateString()] = (dayTotals[d.toDateString()]||0) + kickCount(k);
   });
   const vals = Object.values(dayTotals);
   const avg  = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
 
-  const lowGoal  = todayCount < goal.count && hour >= 18;
-  const lowAvg   = avg > 0 && todayCount < avg * 0.5 && hour >= 12;
+  const lowGoal = todCount < goal.count && hour >= 18;
+  const lowAvg  = avg > 0 && todCount < avg * 0.5 && hour >= 12;
 
   if (lowGoal || lowAvg) {
-    area.innerHTML = `<div class="alert-box warn"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>Movement seems lower than usual</strong>${todayCount} movements logged today${avg ? ` vs. your ${Math.round(avg)}-movement daily average` : ''}. Try lying on your left side and counting for 2 hours. Contact your midwife if you reach fewer than 10 in that window.</div></div>`;
-  } else if (todayCount >= goal.count) {
-    area.innerHTML = `<div class="alert-box ok"><div class="alert-icon">✅</div><div class="alert-text"><strong>Daily goal reached!</strong>${todayCount} movements logged today. Baby is active!</div></div>`;
+    area.innerHTML = `<div class="alert-box warn"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>Movement seems lower than usual</strong>${todCount} movements logged today${avg ? ` vs. your ${Math.round(avg)}-movement daily average` : ''}. Try lying on your left side and counting for 2 hours. Contact your midwife if fewer than 10 in that window.</div></div>`;
+  } else if (todCount >= goal.count) {
+    area.innerHTML = `<div class="alert-box ok"><div class="alert-icon">✅</div><div class="alert-text"><strong>Daily goal reached!</strong>${todCount} movements today. Baby is active!</div></div>`;
   } else {
     area.innerHTML = '';
   }
 }
 
-// ══ Summary chart ════════════════════════════════════════════════════════════
+// ══ Summary chart ═════════════════════════════════════════════════════════════
 function renderChart() {
   const ctx = $('sum-chart').getContext('2d');
   if (sumChart) { sumChart.destroy(); sumChart = null; }
@@ -911,48 +865,48 @@ function renderChart() {
 
   if (sumTab === 'day') {
     labels = Array.from({length:24}, (_,i) => i===0?'12a': i===12?'12p': i<12?`${i}a`:`${i-12}p`);
-    const today = dayStart();
-    const todayKicks = allKicks.filter(k => k.ts?.toDate() >= today);
+    const s = dayStart(selectedDate), e = new Date(s); e.setDate(e.getDate()+1);
+    const dayKicks = allKicks.filter(k => { const t=k.ts?.toDate(); return t>=s && t<e; });
     const counts = Array(24).fill(0);
-    todayKicks.forEach(k => {
-      const h = k.ts?.toDate().getHours();
-      if (h !== undefined) counts[h] += kickCount(k);
-    });
+    dayKicks.forEach(k => { const h=k.ts?.toDate().getHours(); if(h!==undefined) counts[h]+=kickCount(k); });
     data = counts;
 
   } else if (sumTab === 'week') {
-    const days = Array.from({length:7}, (_,i) => { const d=new Date(); d.setDate(d.getDate()-6+i); return d; });
+    // 7 days ending on selectedDate
+    const days = Array.from({length:7}, (_,i) => {
+      const d = new Date(selectedDate); d.setDate(d.getDate()-6+i); return d;
+    });
     labels = days.map(d => d.toLocaleDateString([], {weekday:'short', month:'numeric', day:'numeric'}));
     data   = days.map(d => {
-      const s = dayStart(d), e = new Date(s); e.setDate(e.getDate()+1);
-      return allKicks.filter(k => { const t=k.ts?.toDate(); return t>=s && t<e; }).reduce((s,k)=>s+kickCount(k),0);
+      const s=dayStart(d), e=new Date(s); e.setDate(e.getDate()+1);
+      return allKicks.filter(k=>{const t=k.ts?.toDate(); return t>=s&&t<e;}).reduce((s,k)=>s+kickCount(k),0);
     });
     trend = data.map((_,i) => {
       const sl = data.slice(Math.max(0,i-2),i+1);
-      return Math.round(sl.reduce((a,b)=>a+b,0)/sl.length * 10)/10;
+      return Math.round(sl.reduce((a,b)=>a+b,0)/sl.length*10)/10;
     });
     showTrend = true;
 
   } else {
+    // 4 weeks ending on selectedDate
     const weeks = Array.from({length:4}, (_,i) => {
-      const wS = new Date(); wS.setDate(wS.getDate()-3*7+i*7-wS.getDay()); wS.setHours(0,0,0,0);
-      const wE = new Date(wS); wE.setDate(wE.getDate()+7);
-      return {s:wS, e:wE, lbl:`Wk of ${wS.toLocaleDateString([],{month:'short',day:'numeric'})}`};
+      const wE = new Date(selectedDate); wE.setDate(wE.getDate() - (3-i)*7); wE.setHours(23,59,59,999);
+      const wS = new Date(wE); wS.setDate(wS.getDate()-6); wS.setHours(0,0,0,0);
+      return { s:wS, e:wE, lbl:`Wk of ${wS.toLocaleDateString([],{month:'short',day:'numeric'})}` };
     });
     labels = weeks.map(w => w.lbl);
-    data   = weeks.map(w => allKicks.filter(k=>{const t=k.ts?.toDate(); return t>=w.s&&t<w.e;}).reduce((s,k)=>s+kickCount(k),0));
+    data   = weeks.map(w => allKicks.filter(k=>{const t=k.ts?.toDate(); return t>=w.s&&t<=w.e;}).reduce((s,k)=>s+kickCount(k),0));
   }
 
   const datasets = [{ label:'Movements', data, backgroundColor:'rgba(124,58,237,0.72)', borderRadius:5, borderSkipped:false }];
   if (showTrend) datasets.push({ label:'3-day avg', data:trend, type:'line', borderColor:'#db2777', backgroundColor:'transparent', borderWidth:2, pointRadius:3, pointBackgroundColor:'#db2777', tension:0.4 });
 
   sumChart = new Chart(ctx, {
-    type: 'bar',
-    data: { labels, datasets },
+    type: 'bar', data: { labels, datasets },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive:true, maintainAspectRatio:false,
       plugins: {
-        legend: { display: showTrend, position:'top', labels:{ font:{size:11}, boxWidth:10, padding:8 } },
+        legend: { display:showTrend, position:'top', labels:{ font:{size:11}, boxWidth:10, padding:8 } },
         tooltip: { callbacks: { label: c => `${c.formattedValue} movements` } }
       },
       scales: {
@@ -970,22 +924,16 @@ window.switchSumTab = function(tab, btn) {
   renderChart();
 };
 
-// ══ Heatmap ══════════════════════════════════════════════════════════════════
+// ══ Heatmap — binary (movement vs no movement) ════════════════════════════════
 function buildHeatmap(kicks) {
   const grid = $('heatmap');
   grid.innerHTML = '';
-
   const days = Array.from({length:7}, (_,i) => { const d=new Date(); d.setDate(d.getDate()-6+i); return d; });
-  const heat = {};
-  let maxVal = 1;
+  const heat = new Set();
   kicks.forEach(k => {
     const d = k.ts?.toDate(); if (!d) return;
-    const dayIdx = days.findIndex(x => x.toDateString()===d.toDateString());
-    if (dayIdx < 0) return;
-    const key = `${dayIdx}_${d.getHours()}`;
-    const c = kickCount(k);
-    heat[key] = (heat[key]||0) + c;
-    if (heat[key] > maxVal) maxVal = heat[key];
+    const di = days.findIndex(x => x.toDateString()===d.toDateString());
+    if (di >= 0) heat.add(`${di}_${d.getHours()}`);
   });
 
   days.forEach((day, di) => {
@@ -997,26 +945,20 @@ function buildHeatmap(kicks) {
     row.appendChild(lbl);
     for (let h=0; h<24; h++) {
       const cell = document.createElement('div');
-      cell.className = 'hm-cell';
-      const v = heat[`${di}_${h}`] || 0;
-      if (v > 0) {
-        const alpha = 0.18 + 0.82*(v/maxVal);
-        cell.style.background = `rgba(124,58,237,${alpha})`;
-        cell.title = `${day.toLocaleDateString([],{weekday:'short'})} ${h}:00 — ${v} movement${v>1?'s':''}`;
-      }
+      cell.className = 'hm-cell' + (heat.has(`${di}_${h}`) ? ' active' : '');
+      if (heat.has(`${di}_${h}`)) cell.title = `${day.toLocaleDateString([],{weekday:'short'})} ${h}:00 — movement logged`;
       row.appendChild(cell);
     }
     grid.appendChild(row);
   });
 
-  // Hour labels
   const hourRow = document.createElement('div');
   hourRow.className = 'hm-hour-row';
-  const spacer = document.createElement('div'); hourRow.appendChild(spacer);
+  hourRow.appendChild(document.createElement('div'));
   for (let h=0; h<24; h++) {
     const lbl = document.createElement('div');
     lbl.className = 'hm-hour';
-    lbl.textContent = h===0?'12a': h===12?'12p': h<12?`${h}`: `${h-12}`;
+    lbl.textContent = h===0?'12a': h===12?'12p': h<12?`${h}`:`${h-12}`;
     hourRow.appendChild(lbl);
   }
   grid.appendChild(hourRow);
@@ -1027,7 +969,7 @@ function renderLogs() {
   const list = $('log-list');
   const LIMIT = 10;
   if (!allKicks.length) {
-    list.innerHTML = `<div class="empty-state"><div class="es-icon">🌟</div>No movements logged yet.<br>Tap "Log Movement" above to get started!</div>`;
+    list.innerHTML = `<div class="empty-state"><div class="es-icon">🌟</div>No movements logged yet.<br>Tap "Log Movement" to get started!</div>`;
     $('show-more-btn').classList.add('hidden');
     return;
   }
@@ -1035,22 +977,22 @@ function renderLogs() {
   list.innerHTML = '';
   shown.forEach(k => {
     const ts = k.ts?.toDate(); if (!ts) return;
-    const isSess = k.method === 'session';
+    const cnt = kickCount(k);
     const item = document.createElement('div');
     item.className = 'log-item';
     item.innerHTML = `
       <div class="log-icon">${TYPE_EMOJI[k.type]||'🦶'}</div>
       <div class="log-body">
         <div class="log-main">
-          <span class="log-type">${isSess ? `Session (${k.sessionCount||10})` : k.type}</span>
+          <span class="log-type">${k.type||'kick'}</span>
           <span class="int-badge ${k.intensity}">${k.intensity}</span>
-          ${isSess && k.sessionDuration ? `<span class="session-badge">${k.sessionDuration} min</span>` : ''}
+          ${cnt > 1 ? `<span class="count-badge">×${cnt}</span>` : ''}
         </div>
         <div class="log-time">${fmtDate(ts)} · ${fmtTime(ts)}</div>
         ${k.note ? `<div class="log-note">"${k.note}"</div>` : ''}
       </div>
       <div class="log-actions">
-        <button class="la-btn" title="Edit" onclick="openEdit('${k.id}')">✏️</button>
+        <button class="la-btn" title="Edit"   onclick="openEdit('${k.id}')">✏️</button>
         <button class="la-btn" title="Delete" onclick="quickDelete('${k.id}')">🗑️</button>
       </div>`;
     list.appendChild(item);
@@ -1058,36 +1000,43 @@ function renderLogs() {
   $('show-more-btn').classList.toggle('hidden', allKicks.length <= LIMIT || logsExpanded);
 }
 
-window.showAllLogs = function() {
-  logsExpanded = true;
-  renderLogs();
-};
+window.showAllLogs = function() { logsExpanded = true; renderLogs(); };
 
-// ══ Knowledge panel ══════════════════════════════════════════════════════════
+// ══ Knowledge panel ═══════════════════════════════════════════════════════════
 function buildKnowledge() {
-  const week = gestWeek();
-  const k = getKnowledge(week);
+  const k = getKnowledge(knowledgeWeek);
   $('knowledge-panel').innerHTML = `
     <div class="knowledge-card">
-      <div class="kn-week">Week ${week} Guidance · NHS &amp; Tommy's</div>
+      <div class="kn-nav">
+        <button class="kn-nav-btn" onclick="navigateKnowledge(-1)">‹</button>
+        <div class="kn-week">Week ${knowledgeWeek} Guidance · NHS &amp; Tommy's</div>
+        <button class="kn-nav-btn" onclick="navigateKnowledge(1)">›</button>
+      </div>
       <div class="kn-title">${k.title}</div>
       <ul class="kn-points">${k.points.map(p=>`<li>${p}</li>`).join('')}</ul>
       ${k.alert ? `<div class="kn-alert"><strong>⚠️ When to contact your midwife</strong>${k.alert}</div>` : ''}
     </div>`;
 }
 
+window.navigateKnowledge = function(dir) {
+  knowledgeWeek = Math.max(24, Math.min(40, knowledgeWeek + dir));
+  buildKnowledge();
+};
+
 // ══ Log kick ══════════════════════════════════════════════════════════════════
 window.logKick = async function() {
   const timeVal = $('kick-time').value;
-  const ts = timeFromStr(timeVal);
+  const ts   = timeFromStr(timeVal);
   const note = $('note-area').value.trim();
-  const btn = $('log-kick-btn');
+  const count = parseInt($('count-inp').value) || 1;
+  const btn  = $('log-kick-btn');
   btn.textContent = 'Logging...'; btn.disabled = true;
   try {
     const ref = await addDoc(kicksCol, {
       ts: Timestamp.fromDate(ts), loggedAt: Timestamp.fromDate(new Date()),
-      type: kickType, intensity: kickInt, method: 'individual',
-      sessionCount: null, sessionDuration: null, note, gestWeek: gestWeek()
+      type: kickType, intensity: kickInt, count,
+      method: 'individual', sessionCount: null, sessionDuration: null,
+      note, gestWeek: gestWeek()
     });
     lastId = ref.id;
     btn.textContent = '✓ Logged!'; btn.classList.add('success');
@@ -1096,31 +1045,6 @@ window.logKick = async function() {
     setTimeout(() => { btn.textContent = 'Log Movement'; btn.classList.remove('success'); btn.disabled=false; }, 2000);
   } catch(e) {
     console.error(e); btn.textContent='Log Movement'; btn.disabled=false;
-  }
-};
-
-// ══ Log session ══════════════════════════════════════════════════════════════
-window.logSession = async function() {
-  const timeVal  = $('sess-time').value;
-  const ts       = timeFromStr(timeVal);
-  const count    = parseInt($('sess-count').value) || 10;
-  const duration = parseInt($('sess-dur').value)   || null;
-  const note     = $('snote-area').value.trim();
-  const btn      = $('log-sess-btn');
-  btn.textContent = 'Logging...'; btn.disabled = true;
-  try {
-    const ref = await addDoc(kicksCol, {
-      ts: Timestamp.fromDate(ts), loggedAt: Timestamp.fromDate(new Date()),
-      type: sessType, intensity: sessInt, method: 'session',
-      sessionCount: count, sessionDuration: duration, note, gestWeek: gestWeek()
-    });
-    lastId = ref.id;
-    btn.textContent = '✓ Session Logged!'; btn.classList.add('success');
-    $('snote-area').value = '';
-    showUndo('sess-undo');
-    setTimeout(() => { btn.textContent='Log Session'; btn.classList.remove('success'); btn.disabled=false; }, 2000);
-  } catch(e) {
-    console.error(e); btn.textContent='Log Session'; btn.disabled=false;
   }
 };
 
@@ -1141,7 +1065,7 @@ function showUndo(barId) {
 
 window.undoLast = async function() {
   if (!lastId) return;
-  try { await deleteDoc(doc(db,'kicks',lastId)); lastId=null; $('kick-undo').className='hidden'; $('sess-undo').className='hidden'; clearInterval(undoTimer); }
+  try { await deleteDoc(doc(db,'kicks',lastId)); lastId=null; $('kick-undo').className='hidden'; clearInterval(undoTimer); }
   catch(e) { console.error(e); }
 };
 
@@ -1150,32 +1074,27 @@ window.openEdit = function(id) {
   const k = allKicks.find(x => x.id===id); if (!k) return;
   editingId = id; editType = k.type||'kick'; editInt = k.intensity||'medium';
   document.querySelectorAll('#etype-grid .type-btn').forEach(b => b.classList.toggle('active', b.dataset.type===editType));
-  document.querySelectorAll('#eint-grid .int-btn').forEach(b => {
-    b.classList.remove('active');
-    if (b.dataset.int===editInt) b.classList.add('active');
-  });
+  document.querySelectorAll('#eint-grid .int-btn').forEach(b => { b.classList.remove('active'); if(b.dataset.int===editInt) b.classList.add('active'); });
   const ts = k.ts?.toDate();
-  if (ts) { const p=pad; $('edit-time').value = `${ts.getFullYear()}-${p(ts.getMonth()+1)}-${p(ts.getDate())}T${p(ts.getHours())}:${p(ts.getMinutes())}`; }
+  if (ts) { $('edit-time').value = `${ts.getFullYear()}-${pad(ts.getMonth()+1)}-${pad(ts.getDate())}T${pad(ts.getHours())}:${pad(ts.getMinutes())}`; }
   $('edit-note').value = k.note||'';
   $('edit-modal').classList.remove('hidden');
 };
 
-window.closeModal = function() { $('edit-modal').classList.add('hidden'); editingId=null; };
-
-window.handleOverlayClick = function(e) { if (e.target===e.currentTarget) closeModal(); };
+window.closeModal          = function() { $('edit-modal').classList.add('hidden'); editingId=null; };
+window.handleOverlayClick  = function(e) { if (e.target===e.currentTarget) closeModal(); };
 
 window.saveEdit = async function() {
   if (!editingId) return;
   const timeVal = $('edit-time').value;
-  const updates = { type: editType, intensity: editInt, note: $('edit-note').value.trim() };
+  const updates = { type:editType, intensity:editInt, note:$('edit-note').value.trim() };
   if (timeVal) updates.ts = Timestamp.fromDate(new Date(timeVal));
   try { await updateDoc(doc(db,'kicks',editingId), updates); closeModal(); }
   catch(e) { console.error(e); }
 };
 
 window.deleteEntry = async function() {
-  if (!editingId) return;
-  if (!confirm('Delete this entry?')) return;
+  if (!editingId || !confirm('Delete this entry?')) return;
   try { await deleteDoc(doc(db,'kicks',editingId)); closeModal(); }
   catch(e) { console.error(e); }
 };
@@ -1186,12 +1105,11 @@ window.quickDelete = async function(id) {
   catch(e) { console.error(e); }
 };
 
-// ══ Selection helpers ════════════════════════════════════════════════════════
+// ══ Selection helpers ═════════════════════════════════════════════════════════
 window.selectType = function(btn, gridId, stateKey) {
   document.querySelectorAll(`#${gridId} .type-btn`).forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   if (stateKey==='kickType') kickType = btn.dataset.type;
-  else if (stateKey==='sessType') sessType = btn.dataset.type;
   else if (stateKey==='editType') editType = btn.dataset.type;
 };
 
@@ -1199,16 +1117,24 @@ window.selectInt = function(btn, gridId, stateKey) {
   document.querySelectorAll(`#${gridId} .int-btn`).forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   if (stateKey==='kickInt') kickInt = btn.dataset.int;
-  else if (stateKey==='sessInt') sessInt = btn.dataset.int;
   else if (stateKey==='editInt') editInt = btn.dataset.int;
 };
 
-// ══ Log tab ══════════════════════════════════════════════════════════════════
-window.switchLogTab = function(tab) {
-  $('tab-kick').classList.toggle('active', tab==='kick');
-  $('tab-session').classList.toggle('active', tab==='session');
-  $('kick-form').classList.toggle('hidden', tab!=='kick');
-  $('session-form').classList.toggle('hidden', tab!=='session');
+window.selectCount = function(btn) {
+  document.querySelectorAll('.count-q-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const n = parseInt(btn.dataset.n);
+  kickCountVal = n;
+  $('count-inp').value = n;
+};
+
+window.onCountInput = function(inp) {
+  const n = parseInt(inp.value) || 1;
+  kickCountVal = n;
+  // Deselect quick buttons unless value matches
+  document.querySelectorAll('.count-q-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.n) === n);
+  });
 };
 
 // ══ Time helpers ══════════════════════════════════════════════════════════════
@@ -1221,53 +1147,22 @@ function timeFromStr(str) {
   const d = new Date(); d.setHours(h,m,0,0); return d;
 }
 
-// ══ Note toggles ══════════════════════════════════════════════════════════════
+// ══ Note toggle ═══════════════════════════════════════════════════════════════
 window.toggleNote = function(areaId, togId) {
   const area = $(areaId), tog = $(togId);
   const hidden = area.classList.toggle('hidden');
   tog.textContent = hidden ? '+ Add note' : '− Remove note';
 };
 
-// ══ Session timer ════════════════════════════════════════════════════════════
-window.startTimer = function() {
-  if (timerRunning) return;
-  timerRunning = true;
-  $('t-start').classList.add('hidden');
-  $('t-stop').classList.remove('hidden');
-  timerInterval = setInterval(() => {
-    timerSecs++;
-    const m=Math.floor(timerSecs/60), s=timerSecs%60;
-    $('timer-display').textContent = `${pad(m)}:${pad(s)}`;
-  }, 1000);
-};
-
-window.stopTimer = function() {
-  if (!timerRunning) return;
-  clearInterval(timerInterval); timerRunning=false;
-  $('t-start').classList.remove('hidden');
-  $('t-stop').classList.add('hidden');
-  const mins = Math.round(timerSecs/60);
-  if (mins > 0) $('sess-dur').value = mins;
-  setNow('sess-time');
-};
-
-window.resetTimer = function() {
-  clearInterval(timerInterval); timerRunning=false; timerSecs=0;
-  $('timer-display').textContent = '00:00';
-  $('t-start').classList.remove('hidden');
-  $('t-stop').classList.add('hidden');
-};
-
 // ══ Export CSV ════════════════════════════════════════════════════════════════
 window.exportCSV = function() {
-  const rows = [['Date','Time','Type','Intensity','Method','Movement Count','Duration (min)','Note','Gest. Week']];
+  const rows = [['Date','Time','Type','Intensity','Count','Note','Gest. Week']];
   allKicks.forEach(k => {
     const ts = k.ts?.toDate(); if (!ts) return;
     rows.push([
       ts.toLocaleDateString(), fmtTime(ts),
-      k.type||'', k.intensity||'', k.method||'individual',
-      k.method==='session' ? (k.sessionCount||'') : 1,
-      k.method==='session' ? (k.sessionDuration||'') : '',
+      k.type||'', k.intensity||'',
+      kickCount(k),
       k.note ? `"${k.note.replace(/"/g,'""')}"` : '',
       k.gestWeek||''
     ]);
