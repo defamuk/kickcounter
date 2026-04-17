@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KickCounter</title>
+  <link rel="manifest" href="/kickcounter/manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KickCounter">
+  <link rel="apple-touch-icon" href="/kickcounter/icon.svg">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
@@ -431,6 +437,7 @@ const firebaseConfig = {
 // ══ Constants ═════════════════════════════════════════════════════════════════
 const PASSPHRASE = "babu";
 const DUE_DATE   = new Date("2026-08-06T00:00:00");
+const MIN_DATE   = new Date("2026-04-15T00:00:00");
 const AUTH_KEY   = "kc_auth_v1";
 const TYPE_EMOJI = { kick:'🦶', roll:'🌀', hiccup:'💨', jab:'👊' };
 
@@ -457,7 +464,7 @@ const $ = id => document.getElementById(id);
 
 function gestWeek(ref = new Date()) {
   const daysLeft = Math.max(0, (DUE_DATE - ref) / 86400000);
-  return Math.max(24, Math.min(42, Math.floor(40 - daysLeft / 7)));
+  return Math.min(42, Math.floor(40 - daysLeft / 7));
 }
 
 function daysLeft() {
@@ -698,6 +705,7 @@ function updateHeader() {
     : selectedDate.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
   dayLbl.className = `nav-label${isTod ? ' today' : ''}`;
   $('day-next').disabled = isTod;
+  $('day-prev').disabled = dayStart(selectedDate) <= MIN_DATE;
 
   // Week nav label
   const selWeek = gestWeek(selectedDate);
@@ -708,7 +716,8 @@ function updateHeader() {
 window.navigateDay = function(dir) {
   const next = new Date(selectedDate);
   next.setDate(next.getDate() + dir);
-  if (next > new Date()) return;   // can't go into the future
+  if (next > new Date()) return;          // can't go into the future
+  if (dayStart(next) < MIN_DATE) return;  // can't go before tracking started
   selectedDate = next;
   renderAll();
 };
@@ -717,7 +726,9 @@ window.navigateWeek = function(dir) {
   const next = new Date(selectedDate);
   next.setDate(next.getDate() + dir * 7);
   if (next > new Date()) {
-    selectedDate = new Date();     // clamp to today
+    selectedDate = new Date();            // clamp to today
+  } else if (dayStart(next) < MIN_DATE) {
+    selectedDate = new Date(MIN_DATE);    // clamp to first tracking day
   } else {
     selectedDate = next;
   }
@@ -1174,6 +1185,15 @@ window.exportCSV = function() {
   a.href=url; a.download=`kickcounter_${new Date().toISOString().slice(0,10)}.csv`;
   a.click(); URL.revokeObjectURL(url);
 };
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/kickcounter/sw.js')
+        .catch(err => console.warn('SW registration failed:', err));
+    });
+  }
 </script>
 </body>
 </html>

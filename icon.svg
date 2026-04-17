@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Purple rounded-square background matching app theme -->
+  <rect width="512" height="512" rx="115" fill="#89CFF0"/>
+
+  <!-- Baby foot — medium brown skin tone, right foot viewed from below -->
+  <!-- Big toe on the left (inner), pinky on the right (outer), toes at top, heel at bottom -->
+  <g fill="#ffffff" transform="translate(256,280)">
+
+    <!-- Sole: chubby baby foot — wide at ball, gently tapered waist, round heel -->
+    <path d="
+      M 0,132
+      C -78,132 -108,96 -108,50
+      C -108,-10 -92,-55 -78,-84
+      C -64,-113 -56,-130 -26,-143
+      C -12,-149 0,-151 0,-151
+      C 0,-151 12,-149 26,-143
+      C 56,-130 64,-113 78,-84
+      C 92,-55 108,-10 108,50
+      C 108,96 78,132 0,132 Z
+    "/>
+
+    <!-- Toes — sizes step down from big toe to pinky -->
+    <circle cx="-84" cy="-160" r="33"/>  <!-- Big toe    -->
+    <circle cx="-42" cy="-178" r="27"/>  <!-- 2nd toe    -->
+    <circle cx="4"   cy="-184" r="24"/>  <!-- 3rd toe    -->
+    <circle cx="49"  cy="-172" r="21"/>  <!-- 4th toe    -->
+    <circle cx="87"  cy="-152" r="18"/>  <!-- Pinky toe  -->
+
+  </g>
+</svg>
