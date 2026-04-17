@@ -322,7 +322,7 @@
 
     <div class="picker-lbl">Count</div>
     <div class="count-row">
-      <div class="count-quick">
+      <div class="count-quick" id="count-quick">
         <button class="count-q-btn active" data-n="1" onclick="selectCount(this)">1</button>
         <button class="count-q-btn" data-n="2" onclick="selectCount(this)">2</button>
         <button class="count-q-btn" data-n="3" onclick="selectCount(this)">3</button>
@@ -405,6 +405,22 @@
       <button class="int-btn strong" data-int="strong" onclick="selectInt(this,'eint-grid','editInt')">Strong</button>
     </div>
 
+    <div class="picker-lbl">Count</div>
+    <div class="count-row">
+      <div class="count-quick" id="edit-count-quick">
+        <button class="count-q-btn active" data-n="1" onclick="selectEditCount(this)">1</button>
+        <button class="count-q-btn" data-n="2" onclick="selectEditCount(this)">2</button>
+        <button class="count-q-btn" data-n="3" onclick="selectEditCount(this)">3</button>
+        <button class="count-q-btn" data-n="4" onclick="selectEditCount(this)">4</button>
+        <button class="count-q-btn" data-n="5" onclick="selectEditCount(this)">5</button>
+        <button class="count-q-btn" data-n="6" onclick="selectEditCount(this)">6</button>
+        <button class="count-q-btn" data-n="7" onclick="selectEditCount(this)">7</button>
+        <button class="count-q-btn" data-n="8" onclick="selectEditCount(this)">8</button>
+        <button class="count-q-btn" data-n="9" onclick="selectEditCount(this)">9</button>
+      </div>
+      <input type="number" class="count-inp" id="edit-count-inp" value="1" min="1" max="99" oninput="onEditCountInput(this)">
+    </div>
+
     <div class="time-row" style="margin-top:4px">
       <label>Date &amp; Time</label>
       <input type="datetime-local" class="time-inp" id="edit-time" style="flex:1">
@@ -456,6 +472,7 @@ let kickInt      = 'medium';
 let kickCountVal = 1;
 let editType     = 'kick';
 let editInt      = 'medium';
+let editCount    = 1;
 let editingId    = null;
 let lastId       = null;
 let undoTimer    = null;
@@ -471,7 +488,7 @@ const $ = id => document.getElementById(id);
 
 function gestWeek(ref = new Date()) {
   const daysLeft = Math.max(0, (DUE_DATE - ref) / 86400000);
-  return Math.min(42, Math.floor(40 - daysLeft / 7));
+  return Math.min(42, Math.floor(40 - (daysLeft + 1) / 7));
 }
 
 function daysLeft() {
@@ -1090,9 +1107,11 @@ window.undoLast = async function() {
 // ══ Edit modal ════════════════════════════════════════════════════════════════
 window.openEdit = function(id) {
   const k = allKicks.find(x => x.id===id); if (!k) return;
-  editingId = id; editType = k.type||'kick'; editInt = k.intensity||'medium';
+  editingId = id; editType = k.type||'kick'; editInt = k.intensity||'medium'; editCount = kickCount(k);
   document.querySelectorAll('#etype-grid .type-btn').forEach(b => b.classList.toggle('active', b.dataset.type===editType));
   document.querySelectorAll('#eint-grid .int-btn').forEach(b => { b.classList.remove('active'); if(b.dataset.int===editInt) b.classList.add('active'); });
+  document.querySelectorAll('#edit-count-quick .count-q-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.n)===editCount));
+  $('edit-count-inp').value = editCount;
   const ts = k.ts?.toDate();
   if (ts) { $('edit-time').value = `${ts.getFullYear()}-${pad(ts.getMonth()+1)}-${pad(ts.getDate())}T${pad(ts.getHours())}:${pad(ts.getMinutes())}`; }
   $('edit-note').value = k.note||'';
@@ -1105,7 +1124,7 @@ window.handleOverlayClick  = function(e) { if (e.target===e.currentTarget) close
 window.saveEdit = async function() {
   if (!editingId) return;
   const timeVal = $('edit-time').value;
-  const updates = { type:editType, intensity:editInt, note:$('edit-note').value.trim() };
+  const updates = { type:editType, intensity:editInt, count:editCount, note:$('edit-note').value.trim() };
   if (timeVal) updates.ts = Timestamp.fromDate(new Date(timeVal));
   try { await updateDoc(doc(db,'kicks',editingId), updates); closeModal(); }
   catch(e) { console.error(e); }
@@ -1139,7 +1158,7 @@ window.selectInt = function(btn, gridId, stateKey) {
 };
 
 window.selectCount = function(btn) {
-  document.querySelectorAll('.count-q-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#count-quick .count-q-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const n = parseInt(btn.dataset.n);
   kickCountVal = n;
@@ -1149,8 +1168,22 @@ window.selectCount = function(btn) {
 window.onCountInput = function(inp) {
   const n = parseInt(inp.value) || 1;
   kickCountVal = n;
-  // Deselect quick buttons unless value matches
-  document.querySelectorAll('.count-q-btn').forEach(b => {
+  document.querySelectorAll('#count-quick .count-q-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.n) === n);
+  });
+};
+
+window.selectEditCount = function(btn) {
+  document.querySelectorAll('#edit-count-quick .count-q-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  editCount = parseInt(btn.dataset.n);
+  $('edit-count-inp').value = editCount;
+};
+
+window.onEditCountInput = function(inp) {
+  const n = parseInt(inp.value) || 1;
+  editCount = n;
+  document.querySelectorAll('#edit-count-quick .count-q-btn').forEach(b => {
     b.classList.toggle('active', parseInt(b.dataset.n) === n);
   });
 };
